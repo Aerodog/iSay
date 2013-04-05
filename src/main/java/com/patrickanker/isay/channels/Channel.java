@@ -9,7 +9,7 @@ public abstract class Channel {
     protected String name;
     protected HashMap<String, Boolean> listeners = new HashMap();
     protected ISMain is = ISMain.getInstance();
-    protected ChannelManager channelManager = ISMain.getChannelManager();
+    protected ChannelManager channelManager = ISMain.getInstance().getChannelManager();
 
     protected Channel(String str)
     {

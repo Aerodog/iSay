@@ -1,18 +1,18 @@
 package com.patrickanker.isay.formatters;
 
-import com.patrickanker.lib.util.Formatter;
 import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.lib.util.Formatter;
 
 public class SingleLineBroadcastFormatter extends Formatter {
 
     @Override
     public String formatMessage(String in, Object... otherArgs)
     {
-        String master = ISMain.getConfigData().getString("broadcast-format");
+        String master = ISMain.getInstance().getConfigData().getString("broadcast-format");
 
         if (master == null) {
             master = ISMain.getDefaultBroadcastFormat();
-            ISMain.getConfigData().setString("broadcast-format", ISMain.getDefaultBroadcastFormat());
+            ISMain.getInstance().getConfigData().setString("broadcast-format", ISMain.getDefaultBroadcastFormat());
         }
 
         master = master.replace("$message", in);

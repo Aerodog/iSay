@@ -1,6 +1,6 @@
 package com.patrickanker.isay;
 
-import com.patrickanker.lib.config.PropertyConfiguration;
+import com.patrickanker.isay.lib.config.PropertyConfiguration;
 
 public class ItemAliasManager {
 

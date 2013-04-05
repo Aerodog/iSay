@@ -27,10 +27,10 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        ChatPlayer cp = ISMain.getRegisteredPlayer(event.getPlayer());
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(event.getPlayer());
         
         if (cp.isMuted()) {
-            if (!ISMain.getConfigData().getString("mute-key-phrase").equals(event.getMessage())) {
+            if (!ISMain.getInstance().getConfigData().getString("mute-key-phrase").equals(event.getMessage())) {
                 MuteServices.muteWarn(cp);
             } else {
                 if (!cp.muteTimedOut()) {
@@ -52,7 +52,7 @@ public class PlayerListener implements Listener {
         }
 
         if (event.getPlayer().getItemInHand() != null) {
-            String prefix = ISMain.getItemAliasManager().getAliasForItem(event.getPlayer().getItemInHand().getTypeId());
+            String prefix = ISMain.getInstance().getItemAliasManager().getAliasForItem(event.getPlayer().getItemInHand().getTypeId());
 
             if (prefix != null) {
                 event.getPlayer().chat(prefix + " " + event.getMessage());
@@ -61,7 +61,7 @@ public class PlayerListener implements Listener {
             }
         }
 
-        Channel channel = ISMain.getChannelManager().getFocus(event.getPlayer().getName());
+        Channel channel = ISMain.getInstance().getChannelManager().getFocus(event.getPlayer().getName());
 
         if (channel != null) {
             ChatChannel cc = (ChatChannel) channel;
@@ -89,29 +89,29 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        ISMain.getGroupManager().verifyPlayerGroupExistence(event.getPlayer());
+        ISMain.getInstance().getGroupManager().verifyPlayerGroupExistence(event.getPlayer());
 
-        ChatPlayer cp = ISMain.registerPlayer(event.getPlayer());
-        ISMain.getChannelManager().onPlayerLogin(cp);
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(event.getPlayer());
+        ISMain.getInstance().getChannelManager().onPlayerLogin(cp);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        ChatPlayer cp = ISMain.getRegisteredPlayer(event.getPlayer());
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(event.getPlayer());
 
-        ISMain.getChannelManager().onPlayerLogoff(cp);
-        ISMain.unregisterPlayer(event.getPlayer());
+        ISMain.getInstance().getChannelManager().onPlayerLogoff(cp);
+        ISMain.getInstance().unregisterPlayer(event.getPlayer());
         cp.save();
     }
 
     @EventHandler
     public void onPlayerKick(PlayerKickEvent event)
     {
-        ChatPlayer cp = ISMain.getRegisteredPlayer(event.getPlayer());
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(event.getPlayer());
 
-        ISMain.getChannelManager().onPlayerLogoff(cp);
-        ISMain.unregisterPlayer(event.getPlayer());
+        ISMain.getInstance().getChannelManager().onPlayerLogoff(cp);
+        ISMain.getInstance().unregisterPlayer(event.getPlayer());
         cp.save();
     }
 }

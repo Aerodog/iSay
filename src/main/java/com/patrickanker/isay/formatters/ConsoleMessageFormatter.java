@@ -1,18 +1,18 @@
 package com.patrickanker.isay.formatters;
 
-import com.patrickanker.lib.util.Formatter;
 import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.lib.util.Formatter;
 
 public class ConsoleMessageFormatter extends Formatter {
 
     @Override
     public String formatMessage(String in, Object... otherArgs)
     {
-        String master = ISMain.getConfigData().getString("console-format");
+        String master = ISMain.getInstance().getConfigData().getString("console-format");
 
         if (master == null) {
             master = ISMain.getDefaultConsoleFormat();
-            ISMain.getConfigData().setString("console-format", ISMain.getDefaultConsoleFormat());
+            ISMain.getInstance().getConfigData().setString("console-format", ISMain.getDefaultConsoleFormat());
         }
 
         master = Formatter.encodeColors(master);

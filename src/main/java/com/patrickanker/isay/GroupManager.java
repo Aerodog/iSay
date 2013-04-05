@@ -1,7 +1,7 @@
 package com.patrickanker.isay;
 
-import com.patrickanker.lib.config.PropertyConfiguration;
-import com.patrickanker.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.lib.config.PropertyConfiguration;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
@@ -79,10 +79,10 @@ public class GroupManager {
 
     public void verifyPlayerGroupExistence(Player p)
     {
-        String[] groups = PermissionsManager.getHandler().getGroups(p.getName());
+        List<String> groups = PermissionsManager.getGroups(p.getName());
 
-        if ((groups != null) && (groups.length > 0)) {
-            String group = groups[0];
+        if ((groups != null) && (groups.size() > 0)) {
+            String group = groups.get(0);
 
             if (!groupMap.containsKey(group)) {
                 groupMap.put(group, this.defaultConfig);

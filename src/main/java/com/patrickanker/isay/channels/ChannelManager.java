@@ -9,7 +9,7 @@ import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class ChannelManager {
+public final class ChannelManager {
 
     protected static HashMap<Channel, Boolean> channels = new HashMap<Channel, Boolean>();
     protected Channel def = null;
@@ -34,7 +34,7 @@ public class ChannelManager {
 
             writeDefaults();
         } else {
-            YamlConfiguration channelConfig = ISMain.getChannelConfig();
+            YamlConfiguration channelConfig = ISMain.getInstance().getChannelConfig();
 
             try {
                 channelConfig.load(configFile);
@@ -65,7 +65,7 @@ public class ChannelManager {
             }
         }
 
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(ISMain.getInstance(), new MPMThread(), 0L, 1200L);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(ISMain.getInstance(), new MPMThread(), 0L, 1200L);
     }
 
     public void registerChannel(Channel channel)
@@ -126,8 +126,8 @@ public class ChannelManager {
             l.add(entry.getKey().getName());
         }
 
-        ISMain.getChannelConfig().set("channels", l);
-        ISMain.getChannelConfig().set(channel.getName(), null);
+        ISMain.getInstance().getChannelConfig().set("channels", l);
+        ISMain.getInstance().getChannelConfig().set(channel.getName(), null);
 
     }
 
@@ -154,10 +154,10 @@ public class ChannelManager {
             entry.getKey().dump();
         }
         
-        ISMain.getChannelConfig().set("channels", l);
+        ISMain.getInstance().getChannelConfig().set("channels", l);
         
         try {
-            ISMain.getChannelConfig().save(configFile);
+            ISMain.getInstance().getChannelConfig().save(configFile);
         } catch (IOException ex) {
             ISMain.log("Could not save channel config: " + ex.getMessage(), 2);
         }
@@ -249,15 +249,18 @@ public class ChannelManager {
 
         if (cp.hasAutoJoin()) {
             if (cp.isJoinAllAvailableEnabled()) {
-                ISMain.getChannelManager().joinAllAvailableChannels(cp);
+                ISMain.getInstance().getChannelManager().joinAllAvailableChannels(cp);
             } else {
                 List<String> channelNames = cp.getAutoJoinList();
 
                 for (String channelName : channelNames) {
                     List<Channel> l = matchChannel(channelName);
-
-                    if ((l.size() == 1) && (cp.canConnect((Channel) l.get(0), ""))) {
-                        ((ChatChannel) l.get(0)).connectWithoutBroadcast(cp.getPlayer().getName());
+                    
+                    if (l.size() == 1) {
+                        ChatChannel cc = (ChatChannel) l.get(0);
+                        
+                        if (cp.canConnect(cc, ""))
+                            cc.connect(cp.getPlayer().getName());
                     }
                 }
             }
@@ -265,7 +268,7 @@ public class ChannelManager {
 
         getDefaultChannel().assignFocus(cp.getPlayer().getName(), true);
 
-        if ((cp.getPlayer().isOp()) && (cp.canConnect(ISMain.getChannelManager().getHelpOpChannel(), ""))) {
+        if ((cp.getPlayer().isOp()) && (cp.canConnect(ISMain.getInstance().getChannelManager().getHelpOpChannel(), ""))) {
             getHelpOpChannel().addListener(cp.getPlayer().getName(), false);
         }
     }

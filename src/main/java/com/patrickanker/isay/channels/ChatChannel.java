@@ -1,14 +1,13 @@
 package com.patrickanker.isay.channels;
 
-import com.patrickanker.lib.logging.ConsoleLogger;
-import com.patrickanker.lib.permissions.PermissionsManager;
-import com.patrickanker.lib.util.Formatter;
 import com.patrickanker.isay.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.Statistician;
 import com.patrickanker.isay.formatters.GhostMessageFormatter;
 import com.patrickanker.isay.formatters.MessageFormatter;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.lib.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,7 +70,7 @@ public class ChatChannel extends Channel {
         
         String copy = message;
 
-        if (promoted && !PermissionsManager.getHandler().hasPermission(cp.getPlayer().getName(), "isay.channels." + name + ".promoted")) {
+        if (promoted && !PermissionsManager.hasPermission(cp.getPlayer().getName(), "isay.channels." + name + ".promoted")) {
             cp.sendMessage("§cThis is a promoted channel. You cannot chat without permission.");
             return;
         }
@@ -92,21 +91,21 @@ public class ChatChannel extends Channel {
             }
             
             Player pl = op.getPlayer();
-            ChatPlayer _cp = ISMain.getRegisteredPlayer(pl);
+            ChatPlayer _cp = ISMain.getInstance().getRegisteredPlayer(pl);
 
-            ChatPlayer[] pingees = ISMain.getPingManager().getPingeesFromString(message);
+            ChatPlayer[] pingees = ISMain.getInstance().getPingManager().getPingeesFromString(message);
 
             for (ChatPlayer pingee : pingees) {
-                if (ISMain.getPingManager().canPing(cp, pingee)) {
-                    ISMain.getPingManager().doPing(cp, pingee);
+                if (ISMain.getInstance().getPingManager().canPing(cp, pingee)) {
+                    ISMain.getInstance().getPingManager().doPing(cp, pingee);
                 }
             }
 
-            if (ISMain.getChannelManager().getDebugChannel().hasListener(_cp.getPlayer().getName())) {
+            if (ISMain.getInstance().getChannelManager().getDebugChannel().hasListener(_cp.getPlayer().getName())) {
                 continue;
             }
 
-            if ((_cp.isIgnoring(cp)) || ((ISMain.getRegisteredPlayer(pl).isMuted()) && (!isHelpOp()))) {
+            if ((_cp.isIgnoring(cp)) || ((ISMain.getInstance().getRegisteredPlayer(pl).isMuted()) && (!isHelpOp()))) {
                 continue;
             }
 
@@ -114,7 +113,6 @@ public class ChatChannel extends Channel {
                 _cp.sendMessage(focus);
                 
             } else {
-                
                 _cp.sendMessage(ghost);
             }
         }
@@ -182,55 +180,55 @@ public class ChatChannel extends Channel {
     @Override
     public void load()
     {   
-        if (ISMain.getChannelConfig().contains(this.name + ".default")) {
-            this.def = ISMain.getChannelConfig().getBoolean(this.name + ".default");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".default")) {
+            this.def = ISMain.getInstance().getChannelConfig().getBoolean(this.name + ".default");
         }
         
-        if (ISMain.getChannelConfig().contains(this.name + ".enabled")) {
-            this.enabled = ISMain.getChannelConfig().getBoolean(this.name + ".enabled");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".enabled")) {
+            this.enabled = ISMain.getInstance().getChannelConfig().getBoolean(this.name + ".enabled");
         }
         
-        if (ISMain.getChannelConfig().contains(this.name + ".helpop")) {
-            this.helpop = ISMain.getChannelConfig().getBoolean(this.name + ".helpop");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".helpop")) {
+            this.helpop = ISMain.getInstance().getChannelConfig().getBoolean(this.name + ".helpop");
         }
         
-        if (ISMain.getChannelConfig().contains(this.name + ".locked")) {
-            this.locked = ISMain.getChannelConfig().getBoolean(this.name + ".locked");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".locked")) {
+            this.locked = ISMain.getInstance().getChannelConfig().getBoolean(this.name + ".locked");
         }
         
-        if (ISMain.getChannelConfig().contains(this.name + ".verbose")) {
-            this.verbose = ISMain.getChannelConfig().getBoolean(this.name + ".verbose");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".verbose")) {
+            this.verbose = ISMain.getInstance().getChannelConfig().getBoolean(this.name + ".verbose");
         }
 
-        if (ISMain.getChannelConfig().contains(this.name + ".promoted")) {
-            this.promoted = ISMain.getChannelConfig().getBoolean(this.name + ".promoted");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".promoted")) {
+            this.promoted = ISMain.getInstance().getChannelConfig().getBoolean(this.name + ".promoted");
         }
         
-        if (ISMain.getChannelConfig().contains(this.name + ".ghostformat")) {
-            this.ghostformat = ISMain.getChannelConfig().getString(this.name + ".ghostformat");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".ghostformat")) {
+            this.ghostformat = ISMain.getInstance().getChannelConfig().getString(this.name + ".ghostformat");
         }
 
-        if (ISMain.getChannelConfig().contains(this.name + ".password")) {
-            this.password = ISMain.getChannelConfig().getString(this.name + ".password");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".password")) {
+            this.password = ISMain.getInstance().getChannelConfig().getString(this.name + ".password");
         }
 
-        if (ISMain.getChannelConfig().contains(this.name + ".banlist")) {
-            this.banlist = ISMain.getChannelConfig().getStringList(this.name + ".banlist");
+        if (ISMain.getInstance().getChannelConfig().contains(this.name + ".banlist")) {
+            this.banlist = ISMain.getInstance().getChannelConfig().getStringList(this.name + ".banlist");
         }
     }
 
     @Override
     public void dump()
     {
-        ISMain.getChannelConfig().set(this.name + ".default", this.def);
-        ISMain.getChannelConfig().set(this.name + ".enabled", this.enabled);
-        ISMain.getChannelConfig().set(this.name + ".helpop", this.helpop);
-        ISMain.getChannelConfig().set(this.name + ".locked", this.locked);
-        ISMain.getChannelConfig().set(this.name + ".verbose", this.verbose);
-        ISMain.getChannelConfig().set(this.name + ".promoted", this.promoted);
-        ISMain.getChannelConfig().set(this.name + ".ghostformat", this.ghostformat);
-        ISMain.getChannelConfig().set(this.name + ".password", this.password);
-        ISMain.getChannelConfig().set(this.name + ".banlist", this.banlist);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".default", this.def);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".enabled", this.enabled);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".helpop", this.helpop);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".locked", this.locked);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".verbose", this.verbose);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".promoted", this.promoted);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".ghostformat", this.ghostformat);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".password", this.password);
+        ISMain.getInstance().getChannelConfig().set(this.name + ".banlist", this.banlist);
     }
 
     public void setDefault(boolean bool)

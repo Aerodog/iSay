@@ -13,7 +13,6 @@
 package com.patrickanker.isay.channels;
 
 import com.patrickanker.isay.ChatPlayer;
-import com.patrickanker.isay.ISMain;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -61,6 +60,10 @@ public class DebugChannel extends Channel {
 
                 p.sendMessage(message);
             }
+        }
+        
+        for (String rem : remove) {
+            listeners.remove(rem);
         }
     }
 

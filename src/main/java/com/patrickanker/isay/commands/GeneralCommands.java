@@ -1,15 +1,15 @@
 package com.patrickanker.isay.commands;
 
-import com.patrickanker.lib.commands.Command;
-import com.patrickanker.lib.commands.CommandPermission;
-import com.patrickanker.lib.commands.Subcommands;
-import com.patrickanker.lib.permissions.PermissionsManager;
-import com.patrickanker.lib.util.Formatter;
 import com.patrickanker.isay.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
 import com.patrickanker.isay.formatters.MessageFormatter;
+import com.patrickanker.isay.lib.commands.Command;
+import com.patrickanker.isay.lib.commands.CommandPermission;
+import com.patrickanker.isay.lib.commands.Subcommands;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.lib.util.Formatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +20,19 @@ import org.bukkit.entity.Player;
 public class GeneralCommands {
 
     @Command(aliases = {"format", "f"}, 
-            bounds = {2, -1})
+            bounds = {2, -1},
+            help = "§c/format -p <name> [format...] §fformats a player's name\n"
+                 + "Common format anchors are §c$n§f and §c$g§f\n"
+                 + "§c$n §ftakes the place of the player's name whereas\n"
+                 + "§c$g §ftakes the place of the general group format for the player.\n"
+                 + "§c/format -g <group> [format...] §fformats a group's format\n"
+                 + "Only §c$g §fis used in this one.\n"
+                 + "§c/format -cgf <channel> [format...] §fformats a channel's ghost format\n"
+                 + "Common format anchors are §c$n§f, §c$g§f, and §c$m\n"
+                 + "§c$n §ftakes the place of a player's name and\n"
+                 + "§c$g §ftakes the place of the general group format for a player.\n"
+                 + "§c$m §ftakes the place of the chat message\n"
+                 + "§c$m must be present in the channel ghost format.")
     @Subcommands(arguments = {"-p", "-g", "-cgf"}, 
             permission = {"isay.general.format.players", "isay.general.format.groups", "isay.general.format.channels"})
     public void format(CommandSender cs, String[] args)
@@ -29,14 +41,14 @@ public class GeneralCommands {
             List l = Bukkit.matchPlayer(args[1]);
 
             if (l.isEmpty()) {
-                if (ISMain.getPlayerConfig().contains(args[1] + ".format")) {
+                if (ISMain.getInstance().getPlayerConfig().contains(args[1] + ".format")) {
                     String concat = "";
                     
                     for (int i = 2; i < args.length; i++) {
                         concat = concat + args[i] + " ";
                     }
                     
-                    ISMain.getPlayerConfig().set(args[1] + ".format", concat.trim());
+                    ISMain.getInstance().getPlayerConfig().set(args[1] + ".format", concat.trim());
                     
                     cs.sendMessage("§8==============================");
                     cs.sendMessage("Formatted §a" + args[1] + "§f's name to§8:");
@@ -51,7 +63,7 @@ public class GeneralCommands {
             } else if (l.size() > 1) {
                 cs.sendMessage("§cMultiple players found with that name.");
             } else {
-                ChatPlayer cp = ISMain.getRegisteredPlayer((Player) l.get(0));
+                ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer((Player) l.get(0));
                 String concat = "";
 
                 for (int i = 2; i < args.length; i++) {
@@ -69,7 +81,7 @@ public class GeneralCommands {
             }
         } else if (args[0].equalsIgnoreCase("-g")) {
             List<String> l = new ArrayList<String>();
-            Iterator<String> it = ISMain.getGroupManager().getRegisteredGroups().listIterator();
+            Iterator<String> it = ISMain.getInstance().getGroupManager().getRegisteredGroups().listIterator();
 
             while (it.hasNext()) {
                 String group = (String) it.next();
@@ -90,7 +102,7 @@ public class GeneralCommands {
                     concat = concat + args[i] + " ";
                 }
 
-                ISMain.getGroupManager().getGroupConfiguration((String) l.get(0)).setString("format", concat.trim());
+                ISMain.getInstance().getGroupManager().getGroupConfiguration((String) l.get(0)).setString("format", concat.trim());
 
                 cs.sendMessage("§8==============================");
                 cs.sendMessage("Formatted the §a" + (String) l.get(0) + "§f group's name format to§8:");
@@ -98,7 +110,7 @@ public class GeneralCommands {
                 cs.sendMessage("§8==============================");
             }
         } else if (args[0].equalsIgnoreCase("-cgf")) {
-            List l = ISMain.getChannelManager().matchChannel(args[1]);
+            List l = ISMain.getInstance().getChannelManager().matchChannel(args[1]);
 
             if (l.isEmpty()) {
                 cs.sendMessage("§cNo channel found with that name.");
@@ -119,6 +131,8 @@ public class GeneralCommands {
                 cs.sendMessage(cc.getGhostFormat());
                 cs.sendMessage("§8==============================");
             }
+        } else {
+            cs.sendMessage("§cInvalid usage. See \"/format help\" for assitance.");
         }
     }
     
@@ -132,8 +146,8 @@ public class GeneralCommands {
             List<Player> l = Bukkit.matchPlayer(args[1]);
             
             if (l.isEmpty()) {
-                if (ISMain.getPlayerConfig().contains(args[1])) {
-                    ISMain.getPlayerConfig().set(args[1] + ".namealias", args[2]);
+                if (ISMain.getInstance().getPlayerConfig().contains(args[1])) {
+                    ISMain.getInstance().getPlayerConfig().set(args[1] + ".namealias", args[2]);
                     cs.sendMessage("§7Aliased §a" + args[1] + "§7's name to §a" + args[2]);
                     return;
                 }
@@ -142,7 +156,7 @@ public class GeneralCommands {
             } else if (l.size() > 1) {
                 cs.sendMessage("§cMultiple players found with that name.");
             } else {
-                ChatPlayer cp = ISMain.getRegisteredPlayer(l.get(0));
+                ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(l.get(0));
                 cp.setNameAlias(args[2]);
                 cs.sendMessage("§7Aliased §a" + cp.getPlayer().getName() + "§7's name to §a" + args[2]);
             }
@@ -150,8 +164,8 @@ public class GeneralCommands {
             List<Player> l = Bukkit.matchPlayer(args[1]);
             
             if (l.isEmpty()) {
-                if (ISMain.getPlayerConfig().contains(args[1])) {
-                    ISMain.getPlayerConfig().set(args[1] + ".namealias", null);
+                if (ISMain.getInstance().getPlayerConfig().contains(args[1])) {
+                    ISMain.getInstance().getPlayerConfig().set(args[1] + ".namealias", null);
                     cs.sendMessage("§7Reset §a" + args[1] + "§7's name");
                     return;
                 }
@@ -160,10 +174,12 @@ public class GeneralCommands {
             } else if (l.size() > 1) {
                 cs.sendMessage("§cMultiple players found with that name.");
             } else {
-                ChatPlayer cp = ISMain.getRegisteredPlayer(l.get(0));
+                ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(l.get(0));
                 cp.setNameAlias(null);
                 cs.sendMessage("§7Reset §a" + cp.getPlayer().getName() + "§7's name");
             }
+        } else {
+            cs.sendMessage("§cInvalid usage. See \"/alias help\" for assitance.");
         }
     }
 
@@ -175,16 +191,16 @@ public class GeneralCommands {
     public void helpop(CommandSender cs, String[] args)
     {
         Player p = (Player) cs;
-        ChatPlayer cp = ISMain.getRegisteredPlayer(p);
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(p);
 
-        if (!PermissionsManager.getHandler().hasPermission(p.getName(), "isay.general.helpop.read")) {
+        if (!PermissionsManager.hasPermission(p.getName(), "isay.general.helpop.read")) {
             String concat = "";
 
             for (int i = 0; i < args.length; i++) {
                 concat = concat + args[i] + " ";
             }
 
-            ChatChannel helpop = (ChatChannel) ISMain.getChannelManager().getHelpOpChannel();
+            ChatChannel helpop = (ChatChannel) ISMain.getInstance().getChannelManager().getHelpOpChannel();
 
             if (helpop == null) {
                 p.sendMessage("§cHelpOp has not been configured on this server.");
@@ -194,7 +210,7 @@ public class GeneralCommands {
                 p.sendMessage("§6" + concat.trim());
             }
         } else {
-            ChatChannel helpop = (ChatChannel) ISMain.getChannelManager().getHelpOpChannel();
+            ChatChannel helpop = (ChatChannel) ISMain.getInstance().getChannelManager().getHelpOpChannel();
 
             String concat = "";
 

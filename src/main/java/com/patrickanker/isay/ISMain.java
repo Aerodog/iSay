@@ -1,20 +1,20 @@
 package com.patrickanker.isay;
 
-import com.patrickanker.lib.commands.*;
-import com.patrickanker.lib.config.PropertyConfiguration;
-import com.patrickanker.lib.logging.ConsoleLogger;
-import com.patrickanker.lib.permissions.PermissionsManager;
 import com.patrickanker.isay.channels.ChannelManager;
 import com.patrickanker.isay.commands.*;
+import com.patrickanker.isay.lib.commands.CommandManager;
+import com.patrickanker.isay.lib.commands.CommandOverrideHelper;
+import com.patrickanker.isay.lib.config.PropertyConfiguration;
+import com.patrickanker.isay.lib.logging.ConsoleLogger;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.lib.util.Formatter;
 import com.patrickanker.isay.listeners.PlayerListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import com.patrickanker.lib.util.Formatter;
+import java.util.LinkedList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -27,16 +27,18 @@ import org.mcstats.MetricsLite;
 public class ISMain extends JavaPlugin {
 
     private static ISMain instance;
-    protected static PermissionsManager permsManager;
-    protected static CommandManager commandManager;
-    protected static GroupManager groupManager;
-    protected static ChannelManager channelManager;
-    protected static PingManager pingManager;
-    protected static ItemAliasManager itemAliasManager;
-    protected static PropertyConfiguration config = new PropertyConfiguration("/iSay/iSay");
-    protected static YamlConfiguration playerConfig = new YamlConfiguration();
-    protected static YamlConfiguration channelConfig = new YamlConfiguration();
-    private static List<ChatPlayer> registeredPlayers = new ArrayList();
+    private PermissionsManager permsManager;
+    private CommandManager commandManager;
+    private GroupManager groupManager;
+    private ChannelManager channelManager;
+    private PingManager pingManager;
+    private ItemAliasManager itemAliasManager;
+    private CommandOverrideHelper commandOverrideHelper;
+    private final PropertyConfiguration config = new PropertyConfiguration("/iSay/iSay");
+    private final YamlConfiguration playerConfig = new YamlConfiguration();
+    private final YamlConfiguration channelConfig = new YamlConfiguration();
+    private final List<ChatPlayer> registeredPlayers = new LinkedList<ChatPlayer>();
+    private final List<ChatPlayer> persistPlayers = new LinkedList<ChatPlayer>();
     private static final String defaultMessageFormat = "$id $m";
     private static final String defaultBroadcastFormat = "&f[&cBroadcast&f] &a$m";
     private static final String defaultConsoleFormat = "&d[Server] $m";
@@ -48,14 +50,13 @@ public class ISMain extends JavaPlugin {
         pingManager.shutdownPingTask();
         itemAliasManager.shutDown();
 
-        Iterator it = registeredPlayers.listIterator();
-
-        while (it.hasNext()) {
-            ChatPlayer next = (ChatPlayer) it.next();
-            next.save();
-        }
-
         unregisterAllPlayers();
+        
+        for (ChatPlayer persist : persistPlayers) {
+            persist.save();
+        }
+        
+        persistPlayers.clear();
 
         try {
             playerConfig.save(new File("plugins/iSay/players.yml"));
@@ -78,7 +79,8 @@ public class ISMain extends JavaPlugin {
         }
         
         commandManager = new CommandManager(this);
-        permsManager = new PermissionsManager(getServer(), "[iSay]", config);
+        commandOverrideHelper = new CommandOverrideHelper();
+        permsManager = new PermissionsManager(this);
         groupManager = new GroupManager();
         channelManager = new ChannelManager();
         pingManager = new PingManager();
@@ -94,9 +96,8 @@ public class ISMain extends JavaPlugin {
         commandManager.registerCommands(PlayerCommands.class);
         
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-        Bukkit.getPluginManager().registerEvents(permsManager, this);
 
-        permsManager.registerActiveHandler();
+        permsManager.initialize();
         
         try {
             File _players = new File("plugins/iSay/players.yml");
@@ -139,22 +140,22 @@ public class ISMain extends JavaPlugin {
         return commandManager.executeCommandProcessErrors(command, cs, args, this);
     }
 
-    public static ChannelManager getChannelManager()
+    public ChannelManager getChannelManager()
     {
         return channelManager;
     }
 
-    public static PropertyConfiguration getConfigData()
+    public PropertyConfiguration getConfigData()
     {
         return config;
     }
 
-    public static YamlConfiguration getPlayerConfig()
+    public YamlConfiguration getPlayerConfig()
     {
         return playerConfig;
     }
     
-    public static YamlConfiguration getChannelConfig()
+    public YamlConfiguration getChannelConfig()
     {
         return channelConfig;
     }
@@ -164,40 +165,48 @@ public class ISMain extends JavaPlugin {
         return instance;
     }
 
-    public static GroupManager getGroupManager()
+    public GroupManager getGroupManager()
     {
         return groupManager;
     }
 
-    public static PingManager getPingManager()
+    public PingManager getPingManager()
     {
         return pingManager;
     }
 
-    public static ItemAliasManager getItemAliasManager()
+    public ItemAliasManager getItemAliasManager()
     {
         return itemAliasManager;
     }
-
-    public static ChatPlayer registerPlayer(Player player)
+    
+    public CommandOverrideHelper getCommandOverrideHelper()
     {
-        if (!isPlayerRegistered(player)) {
+        return commandOverrideHelper;
+    }
+
+    private ChatPlayer registerPlayer(Player player)
+    {
+        if (player != null) {
             ChatPlayer cp = new ChatPlayer(player);
             registerPlayer(cp);
             return cp;
+        } else {
+            return null;
         }
-
-        return getRegisteredPlayer(player);
     }
 
-    private static void registerPlayer(ChatPlayer cp)
+    private void registerPlayer(ChatPlayer cp)
     {
         if (!registeredPlayers.contains(cp)) {
             registeredPlayers.add(cp);
+            
+            if (isPlayerPersisted(cp.getPlayer()))
+                persistPlayers.remove(cp);
         }
     }
 
-    public static void unregisterPlayer(Player player)
+    public void unregisterPlayer(Player player)
     {
         if (isPlayerRegistered(player)) {
             ChatPlayer cp = getRegisteredPlayer(player);
@@ -205,44 +214,82 @@ public class ISMain extends JavaPlugin {
         }
     }
 
-    private static void unregisterPlayer(ChatPlayer cp)
+    private void unregisterPlayer(ChatPlayer cp)
     {
         if (registeredPlayers.contains(cp)) {
             registeredPlayers.remove(cp);
+            persistPlayers.add(cp);
         }
     }
 
-    private static void unregisterAllPlayers()
+    private void unregisterAllPlayers()
     {
+        persistPlayers.addAll(registeredPlayers);
         registeredPlayers.clear();
     }
 
-    public static boolean isPlayerRegistered(Player player)
+    public boolean isPlayerRegistered(Player player)
     {
-        ChatPlayer[] cps = new ChatPlayer[registeredPlayers.size()];
-        cps = (ChatPlayer[]) registeredPlayers.toArray(cps);
-
-        for (ChatPlayer cp : cps) {
+        for (ChatPlayer cp : registeredPlayers) {
             if (cp.getPlayer().getName().equals(player.getName())) {
                 return true;
             }
         }
+        
         return false;
     }
-
-    public static ChatPlayer getRegisteredPlayer(Player player)
+    
+    private boolean isPlayerPersisted(Player p)
     {
-        ChatPlayer[] cps = new ChatPlayer[registeredPlayers.size()];
-        cps = (ChatPlayer[]) registeredPlayers.toArray(cps);
-
-        for (ChatPlayer cp : cps) {
-            if (cp.getPlayer().equals(player)) {
+        for (ChatPlayer cp : persistPlayers) {
+            if (cp.getPlayer().getName().equals(p.getName()))
+                return true;
+        }
+        
+        return false;
+    }
+    
+    private ChatPlayer getPersistedPlayer(Player p)
+    {
+        for (ChatPlayer cp : persistPlayers) {
+            if (cp.getPlayer().getName().equals(p.getName()))
                 return cp;
+        }
+        
+        return null;
+    }
+
+    public ChatPlayer getRegisteredPlayer(Player player)
+    {
+        ChatPlayer ret = null;
+        
+        for (ChatPlayer cp : registeredPlayers) {
+            if (cp.getPlayer().getName().equals(player.getName())) {
+                ret = cp;
             }
         }
-        ChatPlayer cp = new ChatPlayer(player);
-        registerPlayer(cp);
-        return cp;
+        
+        if (ret != null) {
+            return ret;
+        } else {
+            if (isPlayerPersisted(player)) {
+                ret = getPersistedPlayer(player);
+                registerPlayer(ret);
+                return ret;
+            } else {
+                if (player.isOnline()) {
+                    ret = registerPlayer(player);
+                    
+                    if (ret != null) {
+                        return ret;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
     }
 
     public static String getDefaultBroadcastFormat()
@@ -265,6 +312,7 @@ public class ISMain extends JavaPlugin {
         getConfigData().setString("broadcast-format", "&f[&cBroadcast&f] &a$m");
         getConfigData().setString("console-format", "&d[Server] $m");
         getConfigData().setString("message-format", "$id $m");
+        getConfigData().setBoolean("override-other-commands", true);
 
         getConfigData().setString("reset", "no");
         log("| ========================================== |");
@@ -295,7 +343,10 @@ public class ISMain extends JavaPlugin {
             playerCopy = "§c[ERROR] " + playerCopy;
         }
 
-        channelManager.getDebugChannel().dispatch(null, playerCopy);
+        if (ISMain.getInstance().channelManager != null) { // Post-plugin enable
+            ISMain.getInstance().channelManager.getDebugChannel().dispatch(null, playerCopy);
+        }
+        
         ConsoleLogger.getLogger("iSay").log(str, importance);
     }
 }

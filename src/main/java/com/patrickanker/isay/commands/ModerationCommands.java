@@ -18,11 +18,11 @@ import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.MuteServices;
 import com.patrickanker.isay.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
-import com.patrickanker.lib.commands.Command;
-import com.patrickanker.lib.commands.CommandPermission;
+import com.patrickanker.isay.lib.commands.Command;
+import com.patrickanker.isay.lib.commands.CommandPermission;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
 import java.util.List;
 
-import com.patrickanker.lib.permissions.PermissionsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -49,7 +49,7 @@ public class ModerationCommands {
             } else if (l.size() > 1) {
                 cs.sendMessage("§cMultiple players found with that name.");
             } else {
-                ChatPlayer cp = ISMain.getRegisteredPlayer(l.get(0));
+                ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(l.get(0));
                 cp.setMuted(!cp.isMuted());
                 
                 if (cp.isMuted()) {
@@ -90,7 +90,7 @@ public class ModerationCommands {
             } else if (l.size() > 1) {
                 cs.sendMessage("§cMultiple players found with that name.");
             } else {
-                ChatPlayer cp = ISMain.getRegisteredPlayer(l.get(0));
+                ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(l.get(0));
                 cp.setMuted(!cp.isMuted());
                 
                 if (cp.isMuted()) {
@@ -148,12 +148,12 @@ public class ModerationCommands {
                 Player kicker = (Player) cs;
                 Player kicked = lp.get(0);
 
-                Channel kickerFocus = ISMain.getChannelManager().getFocus(kicker.getName());
+                Channel kickerFocus = ISMain.getInstance().getChannelManager().getFocus(kicker.getName());
 
                 if (kickerFocus != null) {
                     ChatChannel cc = (ChatChannel) kickerFocus;
 
-                    if (!PermissionsManager.getHandler().hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
+                    if (!PermissionsManager.hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
                         cs.sendMessage("§cYou do not have authorisation to moderate this channel.");
                         return;
                     }
@@ -192,7 +192,7 @@ public class ModerationCommands {
             } else {
                 Player kicked = lp.get(0);
 
-                List<Channel> lc = ISMain.getChannelManager().matchChannel(args[1]);
+                List<Channel> lc = ISMain.getInstance().getChannelManager().matchChannel(args[1]);
 
                 if (lc.isEmpty()) {
                     cs.sendMessage("§cNo channel found with that name.");
@@ -201,7 +201,7 @@ public class ModerationCommands {
                 } else {
                     ChatChannel cc = (ChatChannel) lc.get(0);
 
-                    if (!PermissionsManager.getHandler().hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
+                    if (!PermissionsManager.hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
                         cs.sendMessage("§cYou do not have authorisation to moderate this channel.");
                         return;
                     }
@@ -254,12 +254,12 @@ public class ModerationCommands {
                 Player banner = (Player) cs;
                 Player banned = lp.get(0);
 
-                Channel kickerFocus = ISMain.getChannelManager().getFocus(banner.getName());
+                Channel kickerFocus = ISMain.getInstance().getChannelManager().getFocus(banner.getName());
 
                 if (kickerFocus != null) {
                     ChatChannel cc = (ChatChannel) kickerFocus;
 
-                    if (!PermissionsManager.getHandler().hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
+                    if (!PermissionsManager.hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
                         cs.sendMessage("§cYou do not have authorisation to moderate this channel.");
                         return;
                     }
@@ -304,7 +304,7 @@ public class ModerationCommands {
             } else {
                 Player banned = lp.get(0);
 
-                List<Channel> lc = ISMain.getChannelManager().matchChannel(args[1]);
+                List<Channel> lc = ISMain.getInstance().getChannelManager().matchChannel(args[1]);
 
                 if (lc.isEmpty()) {
                     cs.sendMessage("§cNo channel found with that name.");
@@ -313,7 +313,7 @@ public class ModerationCommands {
                 } else {
                     ChatChannel cc = (ChatChannel) lc.get(0);
 
-                    if (!PermissionsManager.getHandler().hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
+                    if (!PermissionsManager.hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
                         cs.sendMessage("§cYou do not have authorisation to moderate this channel.");
                         return;
                     }
@@ -372,17 +372,17 @@ public class ModerationCommands {
                 Player puller = (Player) cs;
                 Player pulled = lp.get(0);
 
-                Channel kickerFocus = ISMain.getChannelManager().getFocus(puller.getName());
+                Channel kickerFocus = ISMain.getInstance().getChannelManager().getFocus(puller.getName());
 
                 if (kickerFocus != null) {
                     ChatChannel cc = (ChatChannel) kickerFocus;
 
-                    if (!PermissionsManager.getHandler().hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
+                    if (!PermissionsManager.hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
                         cs.sendMessage("§cYou do not have authorisation to moderate this channel.");
                         return;
                     }
 
-                    for (Channel channel : ISMain.getChannelManager().getList()) {
+                    for (Channel channel : ISMain.getInstance().getChannelManager().getList()) {
                         if (channel.hasFocus(pulled.getName())) {
                             channel.assignFocus(pulled.getName(), false);
                         }
@@ -405,7 +405,7 @@ public class ModerationCommands {
             } else {
                 Player pulled = lp.get(0);
 
-                List<Channel> lc = ISMain.getChannelManager().matchChannel(args[1]);
+                List<Channel> lc = ISMain.getInstance().getChannelManager().matchChannel(args[1]);
 
                 if (lc.isEmpty()) {
                     cs.sendMessage("§cNo channel found with that name.");
@@ -414,12 +414,12 @@ public class ModerationCommands {
                 } else {
                     ChatChannel cc = (ChatChannel) lc.get(0);
 
-                    if (!PermissionsManager.getHandler().hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
+                    if (!PermissionsManager.hasPermission(cs.getName(), "isay.channel." + cc.getName().toLowerCase() + ".mod")) {
                         cs.sendMessage("§cYou do not have authorisation to moderate this channel.");
                         return;
                     }
 
-                    for (Channel channel : ISMain.getChannelManager().getList()) {
+                    for (Channel channel : ISMain.getInstance().getChannelManager().getList()) {
                         if (channel.hasFocus(pulled.getName())) {
                             channel.assignFocus(pulled.getName(), false);
                         }

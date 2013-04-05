@@ -1,17 +1,15 @@
 package com.patrickanker.isay.commands;
 
-import com.patrickanker.lib.commands.Command;
-import com.patrickanker.lib.commands.CommandPermission;
-import com.patrickanker.lib.logging.ConsoleLogger;
-import com.patrickanker.lib.util.Formatter;
 import com.patrickanker.isay.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.MuteServices;
 import com.patrickanker.isay.formatters.ConsoleMessageFormatter;
 import com.patrickanker.isay.formatters.SingleLineBroadcastFormatter;
+import com.patrickanker.isay.lib.commands.Command;
+import com.patrickanker.isay.lib.commands.CommandPermission;
+import com.patrickanker.isay.lib.util.Formatter;
 import java.util.List;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -58,7 +56,7 @@ public class MessagingCommands {
                 p.sendMessage(concat);
             }
 
-            ISMain.log(concat + "(Origin: " + cs.getName() + ")");
+            ISMain.log(concat + " (Origin: " + cs.getName() + ")");
         } else {
             concat = Formatter.selectFormatter(ConsoleMessageFormatter.class).formatMessage(concat, null, new Object[0]);
 
@@ -80,7 +78,7 @@ public class MessagingCommands {
     public void whisper(CommandSender cs, String[] args)
     {
         Player from = (Player) cs;
-        ChatPlayer cp = ISMain.getRegisteredPlayer(from);
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(from);
         
         if (cp.isMuted()) {
             MuteServices.muteWarn(cp);
@@ -95,7 +93,7 @@ public class MessagingCommands {
             from.sendMessage("§cMultiple players found by that name.");
         } else {
             Player to = (Player) l.get(0);
-            ChatPlayer newTellee = ISMain.getRegisteredPlayer(to);
+            ChatPlayer newTellee = ISMain.getInstance().getRegisteredPlayer(to);
 
             String concat = "";
 
@@ -146,7 +144,7 @@ public class MessagingCommands {
     public void reply(CommandSender cs, String[] args)
     {
         Player from = (Player) cs;
-        ChatPlayer cp = ISMain.getRegisteredPlayer(from);
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(from);
         
         if (cp.isMuted()) {
             MuteServices.muteWarn(cp);
@@ -202,7 +200,7 @@ public class MessagingCommands {
     public void ignore(CommandSender cs, String[] args)
     {
         Player p = (Player) cs;
-        ChatPlayer cp = ISMain.getRegisteredPlayer(p);
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(p);
 
         List l = Bukkit.matchPlayer(args[0]);
 
@@ -229,7 +227,7 @@ public class MessagingCommands {
     public void unignore(CommandSender cs, String[] args)
     {
         Player p = (Player) cs;
-        ChatPlayer cp = ISMain.getRegisteredPlayer(p);
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(p);
 
         List l = Bukkit.matchPlayer(args[0]);
 

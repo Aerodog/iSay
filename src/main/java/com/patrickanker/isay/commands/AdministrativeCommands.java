@@ -14,10 +14,10 @@ package com.patrickanker.isay.commands;
 
 import com.patrickanker.isay.*;
 import com.patrickanker.isay.channels.DebugChannel;
-import com.patrickanker.lib.commands.Command;
-import com.patrickanker.lib.commands.CommandPermission;
 import com.patrickanker.isay.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
+import com.patrickanker.isay.lib.commands.Command;
+import com.patrickanker.isay.lib.commands.CommandPermission;
 
 import java.util.*;
 
@@ -62,7 +62,7 @@ public class AdministrativeCommands {
                 return;
             }
 
-            DebugChannel debugChannel = ISMain.getChannelManager().getDebugChannel();
+            DebugChannel debugChannel = ISMain.getInstance().getChannelManager().getDebugChannel();
 
             if (debugChannel.hasListener(cs.getName())) {
                 debugChannel.removeListener(cs.getName());
@@ -76,30 +76,30 @@ public class AdministrativeCommands {
     
     private void reloadConfig() 
     {
-        ISMain.getChannelManager().reloadChannels();
+        ISMain.getInstance().getChannelManager().reloadChannels();
         
         try {
-            ISMain.getPlayerConfig().load("plugins/iSay/players.yml");
+            ISMain.getInstance().getPlayerConfig().load("plugins/iSay/players.yml");
         } catch (Throwable t) {
             ISMain.log("Could not reload player config", 2);
         }
         
-        ISMain.getGroupManager().load();
-        ISMain.getConfigData().load();
+        ISMain.getInstance().getGroupManager().load();
+        ISMain.getInstance().getConfigData().load();
     }
     
     private void saveConfig()
     {
-        ISMain.getChannelManager().saveChannels();
+        ISMain.getInstance().getChannelManager().saveChannels();
         
         try {
-            ISMain.getPlayerConfig().save("plugins/iSay/players.yml");
+            ISMain.getInstance().getPlayerConfig().save("plugins/iSay/players.yml");
         } catch (Throwable t) {
             ISMain.log("Could not reload player config", 2);
         }
         
-        ISMain.getGroupManager().saveGroupConfigurations();
-        ISMain.getConfigData().save();
+        ISMain.getInstance().getGroupManager().saveGroupConfigurations();
+        ISMain.getInstance().getConfigData().save();
     }
     
     private void info(CommandSender cs, String name)
@@ -113,7 +113,7 @@ public class AdministrativeCommands {
             cs.sendMessage("§8====================");
             cs.sendMessage(LOGO + " §7version §a" + ISMain.getInstance().getDescription().getVersion());
             cs.sendMessage("§8");
-            cs.sendMessage("§7Channels§f: §a" + ISMain.getChannelManager().getList().size());
+            cs.sendMessage("§7Channels§f: §a" + ISMain.getInstance().getChannelManager().getList().size());
             
             int count = Statistician.getStats().fetchInt(ChatChannel.STATS_CURRENT_MESSAGE_COUNT);
             
@@ -134,7 +134,7 @@ public class AdministrativeCommands {
             
             cs.sendMessage("§8====================");
         } else if (!player) {
-            List<Channel> l = ISMain.getChannelManager().matchChannel(name);
+            List<Channel> l = ISMain.getInstance().getChannelManager().matchChannel(name);
             
             if (l.isEmpty()) {
                 cs.sendMessage("§cNo channel found with that name.");
@@ -176,7 +176,7 @@ public class AdministrativeCommands {
     
     private void showChannelListeners(CommandSender cs, String channel)
     {
-        List<Channel> l = ISMain.getChannelManager().matchChannel(channel);
+        List<Channel> l = ISMain.getInstance().getChannelManager().matchChannel(channel);
             
         if (l.isEmpty()) {
             cs.sendMessage("§cNo channel found with that name.");

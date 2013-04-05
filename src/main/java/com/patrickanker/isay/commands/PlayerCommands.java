@@ -16,8 +16,8 @@ import com.patrickanker.isay.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
-import com.patrickanker.lib.commands.Command;
-import com.patrickanker.lib.commands.CommandPermission;
+import com.patrickanker.isay.lib.commands.Command;
+import com.patrickanker.isay.lib.commands.CommandPermission;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -36,7 +36,7 @@ public class PlayerCommands {
     @CommandPermission("isay.players.autojoin")
     public void autojoin(CommandSender cs, String[] args)
     {
-        ChatPlayer cp = ISMain.getRegisteredPlayer((Player) cs);
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer((Player) cs);
 
         if (args.length == 0) {
             cp.setAutoJoinEnable(!cp.hasAutoJoin());
@@ -70,7 +70,7 @@ public class PlayerCommands {
                 cp.sendMessage("§8====================");
             }
         } else {
-            List<Channel> l = ISMain.getChannelManager().matchChannel(args[0]);
+            List<Channel> l = ISMain.getInstance().getChannelManager().matchChannel(args[0]);
 
             if (l.isEmpty()) {
                 cp.sendMessage("§cNo channel found with that name.");

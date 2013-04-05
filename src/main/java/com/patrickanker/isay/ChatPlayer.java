@@ -1,8 +1,8 @@
 package com.patrickanker.isay;
 
-import com.patrickanker.lib.permissions.PermissionsManager;
 import com.patrickanker.isay.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,54 +36,58 @@ public class ChatPlayer {
 
     private void load()
     {
-        if (ISMain.getPlayerConfig().contains(this.p.getName() + ".adminmute")) {
-            this.adminMute = ISMain.getPlayerConfig().getBoolean(this.p.getName() + ".adminmute");
+        if (ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".adminmute")) {
+            this.adminMute = ISMain.getInstance().getPlayerConfig().getBoolean(this.p.getName() + ".adminmute");
         }
         
-        if (ISMain.getPlayerConfig().contains(this.p.getName() + ".adminmutetimeout")) {
-            this.adminMuteTimeout = ISMain.getPlayerConfig().getString(this.p.getName() + ".adminmutetimeout");
+        if (ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".adminmutetimeout")) {
+            this.adminMuteTimeout = ISMain.getInstance().getPlayerConfig().getString(this.p.getName() + ".adminmutetimeout");
         }
         
-        if (ISMain.getPlayerConfig().contains(this.p.getName() + ".format")) {
-            this.format = ISMain.getPlayerConfig().getString(this.p.getName() + ".format");
+        if (ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".format")) {
+            this.format = ISMain.getInstance().getPlayerConfig().getString(this.p.getName() + ".format");
         }
         
-        if (ISMain.getPlayerConfig().contains(this.p.getName() + ".namealias")) {
-            this.nameAlias = ISMain.getPlayerConfig().getString(this.p.getName() + ".namealias");
+        if (ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".namealias")) {
+            this.nameAlias = ISMain.getInstance().getPlayerConfig().getString(this.p.getName() + ".namealias");
         }
         
-        if (ISMain.getPlayerConfig().contains(this.p.getName() + ".joinallavailable")) {
-            this.joinAllAvailable = ISMain.getPlayerConfig().getBoolean(this.p.getName() + ".joinallavailable", false);
+        if (ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".joinallavailable")) {
+            this.joinAllAvailable = ISMain.getInstance().getPlayerConfig().getBoolean(this.p.getName() + ".joinallavailable", false);
         }
         
-        if ((ISMain.getPlayerConfig().contains(this.p.getName() + ".autojoinlistenable"))
-                && (ISMain.getPlayerConfig().getBoolean(this.p.getName() + ".autojoinlistenable", false)) && (!ISMain.getPlayerConfig().getStringList(".autojoinlist").isEmpty())) {
-            List l = ISMain.getPlayerConfig().getStringList(this.p.getName() + ".autojoinlist");
+        if ((ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".autojoinlistenable"))
+                && (ISMain.getInstance().getPlayerConfig().getBoolean(this.p.getName() + ".autojoinlistenable", false)) && (!ISMain.getInstance().getPlayerConfig().getStringList(".autojoinlist").isEmpty())) {
+            List l = ISMain.getInstance().getPlayerConfig().getStringList(this.p.getName() + ".autojoinlist");
             this.autoJoinList.addAll(l);
             this.autoJoin = true;
         }
 
-        if (ISMain.getPlayerConfig().contains(this.p.getName() + ".ping")) {
-            this.ping = ISMain.getPlayerConfig().getBoolean(this.p.getName() + ".ping", true);
+        if (ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".ping")) {
+            this.ping = ISMain.getInstance().getPlayerConfig().getBoolean(this.p.getName() + ".ping", true);
         }
 
-        if (ISMain.getPlayerConfig().contains(this.p.getName() + ".ignorelist")) {
-            List l = ISMain.getPlayerConfig().getStringList(this.p.getName() + ".ignorelist");
+        if (ISMain.getInstance().getPlayerConfig().contains(this.p.getName() + ".ignorelist")) {
+            List l = ISMain.getInstance().getPlayerConfig().getStringList(this.p.getName() + ".ignorelist");
             this.ignoreList.addAll(l);
         }
     }
 
     public void save()
-    {
-        ISMain.getPlayerConfig().set(this.p.getName() + ".format", this.format);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".namealias", this.nameAlias);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".adminmute", this.adminMute);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".adminmutetimeout", this.adminMuteTimeout);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".ping", this.ping);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".joinallavailable", this.joinAllAvailable);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".autojoinlistenable", this.autoJoin);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".autojoinlist", this.autoJoinList);
-        ISMain.getPlayerConfig().set(this.p.getName() + ".ignorelist", this.ignoreList);
+    {   
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".format", this.format);
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".namealias", this.nameAlias);
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".adminmute", this.adminMute);
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".adminmutetimeout", this.adminMuteTimeout);
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".ping", this.ping);
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".joinallavailable", this.joinAllAvailable);
+        
+        if (joinAllAvailable || !autoJoinList.isEmpty())
+            setAutoJoinEnable(true);
+           
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".autojoinlistenable", this.autoJoin);
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".autojoinlist", this.autoJoinList);
+        ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".ignorelist", this.ignoreList);
     }
 
     public Player getPlayer()
@@ -99,19 +103,19 @@ public class ChatPlayer {
 
         ChatChannel cc = (ChatChannel) channel;
 
-        if (PermissionsManager.getHandler().hasPermission(this.p.getName(), "isay.admin")) {
+        if (PermissionsManager.hasPermission(this.p.getName(), "isay.admin")) {
             return true;
         }
 
         if (cc.isBanned(this.p.getName()))
             return false;
 
-        if (ISMain.getConfigData().getBoolean("disable-crossworld-chat")) {
-            return (PermissionsManager.getHandler().hasPermission(this.p.getWorld().getName(), this.p.getName(), "isay.channel." + cc.getName().toLowerCase() + ".join"))
+        if (ISMain.getInstance().getConfigData().getBoolean("disable-crossworld-chat")) {
+            return (PermissionsManager.hasPermission(this.p.getWorld().getName(), this.p.getName(), "isay.channel." + cc.getName().toLowerCase() + ".join"))
                     && (password.equals(cc.getPassword()));
         }
 
-        return (PermissionsManager.getHandler().hasPermission(this.p.getName(), "isay.channel." + cc.getName().toLowerCase() + ".join"))
+        return (PermissionsManager.hasPermission(this.p.getName(), "isay.channel." + cc.getName().toLowerCase() + ".join"))
                 && (password.equals(cc.getPassword()));
     }
 
@@ -170,7 +174,7 @@ public class ChatPlayer {
     public String getGroupFormat()
     {
         try {
-            String ret = ISMain.getGroupManager().getGroupConfiguration(PermissionsManager.getHandler().getGroups(this.p.getName())[0]).getString("format");
+            String ret = ISMain.getInstance().getGroupManager().getGroupConfiguration(PermissionsManager.getGroups(this.p.getName()).get(0)).getString("format");
             return ret;
         } catch (Throwable t) {
             

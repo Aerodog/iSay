@@ -1,9 +1,9 @@
 package com.patrickanker.isay.formatters;
 
-import com.patrickanker.lib.permissions.PermissionsManager;
-import com.patrickanker.lib.util.Formatter;
 import com.patrickanker.isay.ChatPlayer;
 import com.patrickanker.isay.channels.ChatChannel;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.lib.util.Formatter;
 
 public class GhostMessageFormatter extends Formatter {
 
@@ -48,7 +48,7 @@ public class GhostMessageFormatter extends Formatter {
         master = master.replace("$channel", destination.getName());
         master = master.replace("$ch", destination.getName());
 
-        if (PermissionsManager.getHandler().hasPermission(cp.getPlayer().getWorld().getName(), cp.getPlayer().getName(), "isay.chat.color")) {
+        if (PermissionsManager.hasPermission(cp.getPlayer().getWorld().getName(), cp.getPlayer().getName(), "isay.chat.color")) {
             in = Formatter.encodeColors(in);
         }
         

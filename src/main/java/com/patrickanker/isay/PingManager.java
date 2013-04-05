@@ -1,6 +1,6 @@
 package com.patrickanker.isay;
 
-import com.patrickanker.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.lib.permissions.PermissionsManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +54,7 @@ public class PingManager {
             List match = Bukkit.matchPlayer(get);
 
             if ((!match.isEmpty()) && (match.size() <= 1)) {
-                ChatPlayer toPing = ISMain.getRegisteredPlayer((Player) match.get(0));
+                ChatPlayer toPing = ISMain.getInstance().getRegisteredPlayer((Player) match.get(0));
                 l.add(toPing);
             }
         }
@@ -65,7 +65,7 @@ public class PingManager {
 
     public boolean canPing(ChatPlayer pinger, ChatPlayer pingee)
     {
-        if ((PermissionsManager.getHandler().hasPermission(pinger.getPlayer().getName(), "isay.ping.ping"))
+        if ((PermissionsManager.hasPermission(pinger.getPlayer().getName(), "isay.ping.ping"))
                 && (pingee.isPingEnabled())) {
             if (this.lastUsed.containsKey(pinger.getPlayer().getName())) {
                 long last = ((Long) this.lastUsed.get(pinger.getPlayer().getName())).longValue();
