@@ -313,6 +313,7 @@ public class ISMain extends JavaPlugin {
         getConfigData().setString("console-format", "&d[Server] $m");
         getConfigData().setString("message-format", "$id $m");
         getConfigData().setBoolean("override-other-commands", true);
+        getConfigData().setString("mute-key-phrase", "I agree. Allow me to chat.");
 
         getConfigData().setString("reset", "no");
         log("| ========================================== |");

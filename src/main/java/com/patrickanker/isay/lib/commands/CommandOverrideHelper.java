@@ -34,7 +34,6 @@ public final class CommandOverrideHelper implements Listener {
     public CommandOverrideHelper()
     {
         overrider = new CommandOverrider();
-        ISMain.log("REGISTERING OVERRIDER");
         Bukkit.getPluginManager().registerEvents(this, ISMain.getInstance());
     }
     

@@ -17,7 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-public class ChatChannel extends Channel {
+public final class ChatChannel extends Channel {
 
     protected boolean def = false;
     protected boolean enabled = true;
@@ -81,11 +81,30 @@ public class ChatChannel extends Channel {
         
         String focus = Formatter.selectFormatter(MessageFormatter.class).formatMessage(copy, cp);
         String ghost = Formatter.selectFormatter(GhostMessageFormatter.class).formatMessage(copy, cp, this);
+        
+        ChatPlayer[] pingees = ISMain.getInstance().getPingManager().getPingeesFromString(message);
+        
+        for (ChatPlayer pingee : pingees) {
+            if (ISMain.getInstance().getPingManager().canPing(cp, pingee)) {
+                ISMain.getInstance().getPingManager().doPing(cp, pingee);
+            }
+        }
+        
+        if (!(cp.isMuted() && !isHelpOp())) {
+            if (hasFocus(cp.getPlayer().getName())) {
+                cp.sendMessage(focus);
+            } else {
+                cp.sendMessage(ghost);
+            }
+        }
 
         for (Map.Entry l : this.listeners.entrySet()) {
+            if (l.getKey().equals(cp.getPlayer().getName()))
+                continue;
+            
             OfflinePlayer op = Bukkit.getOfflinePlayer((String) l.getKey());
             
-            if (!op.isOnline()) {
+            if (op.getPlayer() == null) {
                 oldListeners.add(op.getName());
                 continue;
             }
@@ -93,19 +112,11 @@ public class ChatChannel extends Channel {
             Player pl = op.getPlayer();
             ChatPlayer _cp = ISMain.getInstance().getRegisteredPlayer(pl);
 
-            ChatPlayer[] pingees = ISMain.getInstance().getPingManager().getPingeesFromString(message);
-
-            for (ChatPlayer pingee : pingees) {
-                if (ISMain.getInstance().getPingManager().canPing(cp, pingee)) {
-                    ISMain.getInstance().getPingManager().doPing(cp, pingee);
-                }
-            }
-
             if (ISMain.getInstance().getChannelManager().getDebugChannel().hasListener(_cp.getPlayer().getName())) {
                 continue;
             }
 
-            if ((_cp.isIgnoring(cp)) || ((ISMain.getInstance().getRegisteredPlayer(pl).isMuted()) && (!isHelpOp()))) {
+            if ((_cp.isIgnoring(cp)) || ((_cp.isMuted()) && (!isHelpOp()))) {
                 continue;
             }
 
