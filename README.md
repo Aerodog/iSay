@@ -46,7 +46,7 @@ CraftBukkit 1.3.2-R1.0
 iSay 0.1-Re3
 ```
 
-Java versions are not necessary, but you may include them. iSay is generally built on JDK7.
+Java versions are not necessary, but you may include them. iSay is generally built on JDK6.
 
 ### Feature Request
 
