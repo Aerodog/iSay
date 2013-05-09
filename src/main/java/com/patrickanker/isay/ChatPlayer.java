@@ -71,6 +71,8 @@ public class ChatPlayer {
             List l = ISMain.getInstance().getPlayerConfig().getStringList(this.p.getName() + ".ignorelist");
             this.ignoreList.addAll(l);
         }
+        
+        ISMain.debugLog("Data loaded for \"" + p.getName() + "\"");
     }
 
     public void save()
@@ -88,6 +90,7 @@ public class ChatPlayer {
         ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".autojoinlistenable", this.autoJoin);
         ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".autojoinlist", this.autoJoinList);
         ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".ignorelist", this.ignoreList);
+        ISMain.debugLog("Data saved for \"" + p.getName() + "\"");
     }
 
     public Player getPlayer()

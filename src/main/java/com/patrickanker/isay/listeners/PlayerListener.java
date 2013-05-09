@@ -93,6 +93,11 @@ public class PlayerListener implements Listener {
 
         ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(event.getPlayer());
         ISMain.getInstance().getChannelManager().onPlayerLogin(cp);
+        
+        if (ISMain.getInstance().muteSleepPlayers.contains(cp.getPlayer().getName())) {
+            ISMain.getInstance().muteSleepPlayers.remove(cp.getPlayer().getName());
+            cp.setMuted(true);
+        }
     }
 
     @EventHandler
@@ -102,6 +107,10 @@ public class PlayerListener implements Listener {
 
         ISMain.getInstance().getChannelManager().onPlayerLogoff(cp);
         ISMain.getInstance().unregisterPlayer(event.getPlayer());
+        
+        if (cp.isMuted())
+            ISMain.getInstance().muteSleepPlayers.add(cp.getPlayer().getName());
+        
         cp.save();
     }
 
@@ -112,6 +121,10 @@ public class PlayerListener implements Listener {
 
         ISMain.getInstance().getChannelManager().onPlayerLogoff(cp);
         ISMain.getInstance().unregisterPlayer(event.getPlayer());
+        
+        if (cp.isMuted())
+            ISMain.getInstance().muteSleepPlayers.add(cp.getPlayer().getName());
+        
         cp.save();
     }
 }

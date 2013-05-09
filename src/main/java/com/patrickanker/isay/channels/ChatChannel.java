@@ -54,7 +54,7 @@ public final class ChatChannel extends Channel {
         }
     }
 
-    public void connectWithoutBroadcast(String player)
+    public void silentConnect(String player)
     {
         if (!hasListener(player)) {
             addListener(player, true);
@@ -90,12 +90,10 @@ public final class ChatChannel extends Channel {
             }
         }
         
-        if (!(cp.isMuted() && !isHelpOp())) {
-            if (hasFocus(cp.getPlayer().getName())) {
-                cp.sendMessage(focus);
-            } else {
-                cp.sendMessage(ghost);
-            }
+        if (hasFocus(cp.getPlayer().getName())) {
+            cp.sendMessage(focus);
+        } else {
+            cp.sendMessage(ghost);
         }
 
         for (Map.Entry l : this.listeners.entrySet()) {

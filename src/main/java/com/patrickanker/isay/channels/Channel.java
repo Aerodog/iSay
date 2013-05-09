@@ -43,7 +43,7 @@ public abstract class Channel {
     public void assignFocus(String player, boolean focus)
     {
         if (this.listeners.containsKey(player)) {
-            this.listeners.put(player, Boolean.valueOf(focus));
+            this.listeners.put(player, focus);
         }
     }
 

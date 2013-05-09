@@ -245,7 +245,7 @@ public final class ChannelManager {
     // Events
     public void onPlayerLogin(ChatPlayer cp)
     {
-        ((ChatChannel) getDefaultChannel()).connectWithoutBroadcast(cp.getPlayer().getName());
+        ((ChatChannel) getDefaultChannel()).silentConnect(cp.getPlayer().getName());
 
         if (cp.hasAutoJoin()) {
             if (cp.isJoinAllAvailableEnabled()) {
@@ -283,7 +283,7 @@ public final class ChannelManager {
         for (Map.Entry channel : getMap().entrySet()) {
             if (cp.canConnect((Channel) channel.getKey(), "")) {
                 ChatChannel c = (ChatChannel) channel.getKey();
-                c.connectWithoutBroadcast(cp.getPlayer().getName());
+                c.silentConnect(cp.getPlayer().getName());
             }
         }
 

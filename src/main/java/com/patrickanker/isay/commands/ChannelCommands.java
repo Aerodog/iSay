@@ -38,9 +38,14 @@ public class ChannelCommands {
             p.sendMessage("§cMultiple channels found by that name.");
         } else {
             ChatChannel cc = (ChatChannel) l.get(0);
-            Channel focus = ISMain.getInstance().getChannelManager().getFocus(p.getName());
+            ChatChannel focus = (ChatChannel) ISMain.getInstance().getChannelManager().getFocus(p.getName());
 
             if (cc.hasListener(p.getName())) {
+                
+                if (focus.getName().equals(cc.getName())) {
+                    p.sendMessage("§cYou are already focused on this channel.");
+                    return;
+                }
 
                 if (focus != null) {
                     focus.assignFocus(p.getName(), false);

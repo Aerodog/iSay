@@ -6,6 +6,7 @@ import com.patrickanker.isay.lib.commands.CommandManager;
 import com.patrickanker.isay.lib.commands.CommandOverrideHelper;
 import com.patrickanker.isay.lib.config.PropertyConfiguration;
 import com.patrickanker.isay.lib.logging.ConsoleLogger;
+import com.patrickanker.isay.lib.logging.FileLogger;
 import com.patrickanker.isay.lib.permissions.PermissionsManager;
 import com.patrickanker.isay.lib.util.Formatter;
 import com.patrickanker.isay.listeners.PlayerListener;
@@ -38,7 +39,7 @@ public class ISMain extends JavaPlugin {
     private final YamlConfiguration playerConfig = new YamlConfiguration();
     private final YamlConfiguration channelConfig = new YamlConfiguration();
     private final List<ChatPlayer> registeredPlayers = new LinkedList<ChatPlayer>();
-    private final List<ChatPlayer> persistPlayers = new LinkedList<ChatPlayer>();
+    public final List<String> muteSleepPlayers = new LinkedList<String>(); // Yes, I know unethical. Dirty fix.
     private static final String defaultMessageFormat = "$id $m";
     private static final String defaultBroadcastFormat = "&f[&cBroadcast&f] &a$m";
     private static final String defaultConsoleFormat = "&d[Server] $m";
@@ -49,14 +50,12 @@ public class ISMain extends JavaPlugin {
         channelManager.shutDown();
         pingManager.shutdownPingTask();
         itemAliasManager.shutDown();
-
-        unregisterAllPlayers();
         
-        for (ChatPlayer persist : persistPlayers) {
-            persist.save();
+        for (ChatPlayer cp : registeredPlayers) {
+            cp.save();
         }
         
-        persistPlayers.clear();
+        unregisterAllPlayers();
 
         try {
             playerConfig.save(new File("plugins/iSay/players.yml"));
@@ -70,12 +69,16 @@ public class ISMain extends JavaPlugin {
 
     @Override
     public void onEnable()
-    {
+    {   
+        headerDebug();
+        
         instance = this;
         config.load();
+        debugLog("Configuration loaded");
 
         if ((getConfigData().getString("reset") == null) || (getConfigData().getString("reset").equalsIgnoreCase("yes"))) {
             loadFactorySettings();
+            debugLog("Configuration defaulted");
         }
         
         commandManager = new CommandManager(this);
@@ -85,8 +88,10 @@ public class ISMain extends JavaPlugin {
         channelManager = new ChannelManager();
         pingManager = new PingManager();
         itemAliasManager = new ItemAliasManager();
+        debugLog("Managers instantiated");
         
         groupManager.load();
+        debugLog("Group manager: Done");
         
         commandManager.registerCommands(ChannelCommands.class);
         commandManager.registerCommands(GeneralCommands.class);
@@ -94,6 +99,7 @@ public class ISMain extends JavaPlugin {
         commandManager.registerCommands(AdministrativeCommands.class);
         commandManager.registerCommands(ModerationCommands.class);
         commandManager.registerCommands(PlayerCommands.class);
+        debugLog("Command manager: Done");
         
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
@@ -110,11 +116,16 @@ public class ISMain extends JavaPlugin {
             playerConfig.load(_players);
         } catch (FileNotFoundException ex) {
             log("Could not load player data", 2);
+            debugLog("[ERROR] Could not load player data: " + ex.getMessage());
         } catch (IOException ex) {
             log("Could not load player data", 2);
+            debugLog("[ERROR] Could not load player data: " + ex.getMessage());
         } catch (InvalidConfigurationException ex) {
             log("Could not load player data", 2);
+            debugLog("[ERROR] Could not load player data: " + ex.getMessage());
         }
+        
+        debugLog("Permissions manager: Done");
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             ChatPlayer foo = registerPlayer(p);
@@ -128,10 +139,16 @@ public class ISMain extends JavaPlugin {
             
             if (!metrics.isOptOut()) {
                 metrics.start();
+                debugLog("Metrics: Enabled");
+            } else {
+                debugLog("Metrics: Disabled");
             }
         } catch (Throwable t) {
             ISMain.log("Could not send statistics to Metrics", 1);
+            debugLog("[WARNING] Could not send statistics to Metrics: " + t.getMessage());
         }
+        
+        debugLog("iSay enabled");
     }
 
     @Override
@@ -200,9 +217,6 @@ public class ISMain extends JavaPlugin {
     {
         if (!registeredPlayers.contains(cp)) {
             registeredPlayers.add(cp);
-            
-            if (isPlayerPersisted(cp.getPlayer()))
-                persistPlayers.remove(cp);
         }
     }
 
@@ -218,13 +232,11 @@ public class ISMain extends JavaPlugin {
     {
         if (registeredPlayers.contains(cp)) {
             registeredPlayers.remove(cp);
-            persistPlayers.add(cp);
         }
     }
 
     private void unregisterAllPlayers()
     {
-        persistPlayers.addAll(registeredPlayers);
         registeredPlayers.clear();
     }
 
@@ -237,26 +249,6 @@ public class ISMain extends JavaPlugin {
         }
         
         return false;
-    }
-    
-    private boolean isPlayerPersisted(Player p)
-    {
-        for (ChatPlayer cp : persistPlayers) {
-            if (cp.getPlayer().getName().equals(p.getName()))
-                return true;
-        }
-        
-        return false;
-    }
-    
-    private ChatPlayer getPersistedPlayer(Player p)
-    {
-        for (ChatPlayer cp : persistPlayers) {
-            if (cp.getPlayer().getName().equals(p.getName()))
-                return cp;
-        }
-        
-        return null;
     }
 
     public ChatPlayer getRegisteredPlayer(Player player)
@@ -272,23 +264,9 @@ public class ISMain extends JavaPlugin {
         if (ret != null) {
             return ret;
         } else {
-            if (isPlayerPersisted(player)) {
-                ret = getPersistedPlayer(player);
-                registerPlayer(ret);
-                return ret;
-            } else {
-                if (player.isOnline()) {
-                    ret = registerPlayer(player);
-                    
-                    if (ret != null) {
-                        return ret;
-                    } else {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            }
+            ChatPlayer cp = new ChatPlayer(player);
+            registerPlayer(cp);
+            return cp;
         }
     }
 
@@ -349,5 +327,26 @@ public class ISMain extends JavaPlugin {
         }
         
         ConsoleLogger.getLogger("iSay").log(str, importance);
+    }
+    
+    public static void debugLog(String str)
+    {
+        FileLogger debugLogger = new FileLogger(new File("plugins/iSay/logs/debug.log"));
+        debugLogger.log(str);
+    }
+    
+    public static void debugLog(String[] strs)
+    {
+        for (String str : strs) {
+            debugLog(str);
+        }
+    }
+    
+    private static void headerDebug()
+    {
+        debugLog("=======================================================");
+        debugLog("COMMENCING ISAY SESSION                                ");
+        debugLog("                                                       ");
+        debugLog("=======================================================");
     }
 }
