@@ -149,8 +149,8 @@ public class ChannelCommands {
         Player p = (Player) cs;
         ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(p);
 
-        cp.setMuted(!cp.isMuted());
-        p.sendMessage("§7You have §a" + (cp.isMuted() ? "silenced" : "turned on") + " §7chat.");
+        cp.setChannelsMuted(!cp.channelsMuted());
+        p.sendMessage("§7You have §a" + (cp.channelsMuted() ? "silenced" : "turned on") + " §7chat.");
     }
 
     @Command(aliases = {"quickmessage", "qm"}, 

@@ -90,13 +90,18 @@ public class MessageFormattingServices {
     
     private static String getShortenedURL(final String longURL)
     {
-        String shortURL = "";
+        String shortURL;
         
         Url url = as("psanker", "R_c434cf238771a5267d1f100d82ba7433").call(shorten(longURL));
-        shortURL = url.getShortUrl();
         
-        if (shortURL != null)
-            return shortURL;
+        try {
+            shortURL = url.getShortUrl();
+            
+            if (shortURL != null)
+                return shortURL;
+        } catch (Throwable t) {
+            return longURL;
+        }
         
         return "";
     }

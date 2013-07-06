@@ -114,7 +114,7 @@ public final class ChatChannel extends Channel {
                 continue;
             }
 
-            if ((_cp.isIgnoring(cp)) || ((_cp.isMuted()) && (!isHelpOp()))) {
+            if ((_cp.isIgnoring(cp)) || ((_cp.channelsMuted()) && (!isHelpOp()))) {
                 continue;
             }
 
