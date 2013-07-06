@@ -174,8 +174,9 @@ public final class ChannelManager {
     {
         saveChannels();
         
-        for (Channel channel : getList())
+        for (Channel channel : getList()) {
             channel.listeners.clear();
+        }
         
         channels.clear();
     }

@@ -34,7 +34,7 @@ public class AdministrativeCommands {
             bounds={1, -1},
             help="§c/isay debug §ftoggles iSay Debug mode\n"
             + "§c/isay reload §freloads iSay from config\n"
-            + "§c/isay save §saves iSay to config\n"
+            + "§c/isay save §fsaves iSay to config\n"
             + "§c/isay info §fshows general information of iSay\n"
             + "§c/isay info -c <channel> §fshows info about a specific channel\n"
             + "§c/isay info -c <channel> [-l, listeners] §fshows the listeners of a channel\n"
