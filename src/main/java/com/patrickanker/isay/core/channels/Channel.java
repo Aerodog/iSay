@@ -1,6 +1,6 @@
-package com.patrickanker.isay.channels;
+package com.patrickanker.isay.core.channels;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import java.util.HashMap;
 

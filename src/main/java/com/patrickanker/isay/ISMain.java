@@ -1,6 +1,10 @@
 package com.patrickanker.isay;
 
-import com.patrickanker.isay.channels.ChannelManager;
+import com.patrickanker.isay.core.ChatPlayer;
+import com.patrickanker.isay.core.MessagePreprocessingHandler;
+import com.patrickanker.isay.messageprocessing.PingManager;
+import com.patrickanker.isay.messageprocessing.ItemAliasManager;
+import com.patrickanker.isay.core.channels.ChannelManager;
 import com.patrickanker.isay.commands.*;
 import com.patrickanker.isay.lib.commands.CommandManager;
 import com.patrickanker.isay.lib.commands.CommandOverrideHelper;
@@ -8,7 +12,7 @@ import com.patrickanker.isay.lib.config.PropertyConfiguration;
 import com.patrickanker.isay.lib.logging.ConsoleLogger;
 import com.patrickanker.isay.lib.logging.FileLogger;
 import com.patrickanker.isay.lib.permissions.PermissionsManager;
-import com.patrickanker.isay.lib.util.Formatter;
+import com.patrickanker.isay.core.Formatter;
 import com.patrickanker.isay.listeners.PlayerListener;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,21 +29,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.MetricsLite;
 
-public class ISMain extends JavaPlugin {
+public final class ISMain extends JavaPlugin {
 
     private static ISMain instance;
     private PermissionsManager permsManager;
     private CommandManager commandManager;
     private GroupManager groupManager;
     private ChannelManager channelManager;
-    private PingManager pingManager;
-    private ItemAliasManager itemAliasManager;
+    private MessagePreprocessingHandler messagePreprocessingHandler;
     private CommandOverrideHelper commandOverrideHelper;
     private final PropertyConfiguration config = new PropertyConfiguration("/iSay/iSay");
-    private final YamlConfiguration playerConfig = new YamlConfiguration();
+    private final YamlConfiguration playerGroupConfig = new YamlConfiguration();
     private final YamlConfiguration channelConfig = new YamlConfiguration();
     private final List<ChatPlayer> registeredPlayers = new LinkedList<ChatPlayer>();
     public final List<String> muteSleepPlayers = new LinkedList<String>(); // Yes, I know unethical. Dirty fix.
+    
     private static final String defaultMessageFormat = "$id $m";
     private static final String defaultBroadcastFormat = "&f[&cBroadcast&f] &a$m";
     private static final String defaultConsoleFormat = "&d[Server] $m";
@@ -47,9 +51,8 @@ public class ISMain extends JavaPlugin {
     @Override
     public void onDisable()
     {
+        messagePreprocessingHandler.terminateProcesses();
         channelManager.shutDown();
-        pingManager.shutdownPingTask();
-        itemAliasManager.shutDown();
         
         for (ChatPlayer cp : registeredPlayers) {
             cp.save();
@@ -58,7 +61,7 @@ public class ISMain extends JavaPlugin {
         unregisterAllPlayers();
 
         try {
-            playerConfig.save(new File("plugins/iSay/players.yml"));
+            playerGroupConfig.save(new File("plugins/iSay/players.yml"));
         } catch (IOException ex) {
             log("Could not save player data file", 2);
         }
@@ -86,8 +89,7 @@ public class ISMain extends JavaPlugin {
         permsManager = new PermissionsManager(this);
         groupManager = new GroupManager();
         channelManager = new ChannelManager();
-        pingManager = new PingManager();
-        itemAliasManager = new ItemAliasManager();
+        messagePreprocessingHandler = new MessagePreprocessingHandler();
         debugLog("Managers instantiated");
         
         groupManager.load();
@@ -101,6 +103,9 @@ public class ISMain extends JavaPlugin {
         commandManager.registerCommands(PlayerCommands.class);
         debugLog("Command manager: Done");
         
+        messagePreprocessingHandler.registerProcess(ItemAliasManager.class, MessagePreprocessingHandler.IMPORTANCE.NORMAL);
+        messagePreprocessingHandler.registerProcess(PingManager.class, MessagePreprocessingHandler.IMPORTANCE.NORMAL);
+        
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
         permsManager.initialize();
@@ -113,7 +118,7 @@ public class ISMain extends JavaPlugin {
                 _players.createNewFile();
             }
             
-            playerConfig.load(_players);
+            playerGroupConfig.load(_players);
         } catch (FileNotFoundException ex) {
             log("Could not load player data", 2);
             debugLog("[ERROR] Could not load player data: " + ex.getMessage());
@@ -169,7 +174,7 @@ public class ISMain extends JavaPlugin {
 
     public YamlConfiguration getPlayerConfig()
     {
-        return playerConfig;
+        return playerGroupConfig;
     }
     
     public YamlConfiguration getChannelConfig()
@@ -186,15 +191,10 @@ public class ISMain extends JavaPlugin {
     {
         return groupManager;
     }
-
-    public PingManager getPingManager()
+    
+    public MessagePreprocessingHandler getMessagePreprocessHandler()
     {
-        return pingManager;
-    }
-
-    public ItemAliasManager getItemAliasManager()
-    {
-        return itemAliasManager;
+        return messagePreprocessingHandler;
     }
     
     public CommandOverrideHelper getCommandOverrideHelper()

@@ -1,13 +1,14 @@
 package com.patrickanker.isay.channels;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.channels.Channel;
+import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.Statistician;
 import com.patrickanker.isay.formatters.GhostMessageFormatter;
 import com.patrickanker.isay.formatters.MessageFormatter;
 import com.patrickanker.isay.lib.permissions.PermissionsManager;
-import com.patrickanker.isay.lib.util.Formatter;
+import com.patrickanker.isay.core.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,14 +82,6 @@ public final class ChatChannel extends Channel {
         
         String focus = Formatter.selectFormatter(MessageFormatter.class).formatMessage(copy, cp);
         String ghost = Formatter.selectFormatter(GhostMessageFormatter.class).formatMessage(copy, cp, this);
-        
-        ChatPlayer[] pingees = ISMain.getInstance().getPingManager().getPingeesFromString(message);
-        
-        for (ChatPlayer pingee : pingees) {
-            if (ISMain.getInstance().getPingManager().canPing(cp, pingee)) {
-                ISMain.getInstance().getPingManager().doPing(cp, pingee);
-            }
-        }
         
         if (hasFocus(cp.getPlayer().getName())) {
             cp.sendMessage(focus);

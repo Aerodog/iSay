@@ -12,6 +12,7 @@
 
 package com.patrickanker.isay;
 
+import com.patrickanker.isay.core.ChatPlayer;
 import org.bukkit.Bukkit;
 
 

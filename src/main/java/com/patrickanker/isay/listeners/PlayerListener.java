@@ -1,10 +1,13 @@
 package com.patrickanker.isay.listeners;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.core.MessagePreprocessingHandler;
 import com.patrickanker.isay.MuteServices;
-import com.patrickanker.isay.channels.Channel;
+import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
+import java.util.LinkedList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,8 +17,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Set;
-
 public class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
@@ -23,6 +24,14 @@ public class PlayerListener implements Listener {
     {
         // WorldEdit CUI call
         if (event.getMessage().startsWith("u00a7")) {
+            event.setCancelled(true);
+            return;
+        }
+        
+        ISMain.getInstance().getMessagePreprocessHandler().process(event.getPlayer(), event.getMessage());
+        
+        if (ISMain.getInstance().getMessagePreprocessHandler().getStatus() == MessagePreprocessingHandler.STATUS.TERMINATED) {
+            event.getRecipients().clear();
             event.setCancelled(true);
             return;
         }
@@ -44,21 +53,9 @@ public class PlayerListener implements Listener {
                 MuteServices.unmuteAnnounce(cp);
             }
 
-            Set<Player> recipients = event.getRecipients();
-            recipients.clear();
-
+            event.getRecipients().clear();
             event.setCancelled(true);
             return;
-        }
-
-        if (event.getPlayer().getItemInHand() != null) {
-            String prefix = ISMain.getInstance().getItemAliasManager().getAliasForItem(event.getPlayer().getItemInHand().getTypeId());
-
-            if (prefix != null) {
-                event.getPlayer().chat(prefix + " " + event.getMessage());
-                event.setCancelled(true);
-                return;
-            }
         }
 
         Channel channel = ISMain.getInstance().getChannelManager().getFocus(event.getPlayer().getName());
@@ -67,22 +64,22 @@ public class PlayerListener implements Listener {
             ChatChannel cc = (ChatChannel) channel;
             cc.dispatch(cp, event.getMessage());
 
-            Set<Player> recipients = event.getRecipients();
-
+            List<Player> bukkitDispatch = new LinkedList<Player>();
+            
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (!cc.isHelpOp() && !cc.hasFocus(p.getName()))
-                    recipients.remove(p);
-                else if (cc.isHelpOp() && !cc.hasListener(p.getName()))
-                    recipients.remove(p);
+                if (cc.hasFocus(p.getName()))
+                    bukkitDispatch.add(p);
+                    
             }
+            
+            event.getRecipients().clear();
+            event.getRecipients().addAll(bukkitDispatch);
 
             event.setCancelled(true);
         } else {
             event.getPlayer().sendMessage("§cYou do not have a channel focus.");
             event.setCancelled(true);
-
-            Set<Player> recipients = event.getRecipients();
-            recipients.clear();
+            event.getRecipients().clear();
         }
     }
 

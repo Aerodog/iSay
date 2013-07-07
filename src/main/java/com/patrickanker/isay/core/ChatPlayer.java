@@ -1,6 +1,7 @@
-package com.patrickanker.isay;
+package com.patrickanker.isay.core;
 
-import com.patrickanker.isay.channels.Channel;
+import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
 import com.patrickanker.isay.lib.permissions.PermissionsManager;
 import java.text.ParseException;
@@ -10,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.bukkit.entity.Player;
 
-public class ChatPlayer {
+public final class ChatPlayer {
 
     private final Player p;
     private boolean adminMute = false;

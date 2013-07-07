@@ -26,7 +26,7 @@
 
 package com.patrickanker.isay.lib.config;
 
-import com.patrickanker.isay.lib.util.Formatter;
+import com.patrickanker.isay.core.Formatter;
 import com.patrickanker.isay.lib.util.JavaPropertiesFileManager;
 import java.io.File;
 import java.io.IOException;

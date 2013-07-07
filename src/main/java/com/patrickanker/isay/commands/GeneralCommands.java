@@ -1,15 +1,15 @@
 package com.patrickanker.isay.commands;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
-import com.patrickanker.isay.channels.Channel;
+import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
 import com.patrickanker.isay.formatters.MessageFormatter;
 import com.patrickanker.isay.lib.commands.Command;
 import com.patrickanker.isay.lib.commands.CommandPermission;
 import com.patrickanker.isay.lib.commands.Subcommands;
 import com.patrickanker.isay.lib.permissions.PermissionsManager;
-import com.patrickanker.isay.lib.util.Formatter;
+import com.patrickanker.isay.core.Formatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

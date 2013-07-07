@@ -1,7 +1,7 @@
 package com.patrickanker.isay.formatters;
 
 import com.patrickanker.isay.ISMain;
-import com.patrickanker.isay.lib.util.Formatter;
+import com.patrickanker.isay.core.Formatter;
 
 public class ConsoleMessageFormatter extends Formatter {
 

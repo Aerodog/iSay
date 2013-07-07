@@ -12,9 +12,10 @@
 
 package com.patrickanker.isay.commands;
 
+import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.*;
 import com.patrickanker.isay.channels.DebugChannel;
-import com.patrickanker.isay.channels.Channel;
+import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
 import com.patrickanker.isay.lib.commands.Command;
 import com.patrickanker.isay.lib.commands.CommandPermission;
@@ -55,9 +56,8 @@ public class AdministrativeCommands {
                 showChannelListeners(cs, args[2]);
             } else if (args.length == 3 && args[1].equalsIgnoreCase("-p")) {
                 info(cs, args[2], true);
-            } else if (args.length == 4 && args[1].equalsIgnoreCase("-c") && (args[3].equalsIgnoreCase("-l") || args[3].equalsIgnoreCase("listeners"))) {
-                showChannelListeners(cs, args[2]);
             }
+            
         } else if (args[0].equalsIgnoreCase("save")) {
             saveConfig();
             cs.sendMessage(LOGO + " §7saved.");
@@ -193,13 +193,14 @@ public class AdministrativeCommands {
                 ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(p);
                 
                 cs.sendMessage("§8====================");
-                cs.sendMessage(LOGO + " §player data for §6" + p.getName());
+                cs.sendMessage(LOGO + " §7player data for §6" + p.getName());
                 cs.sendMessage("§8");
                 cs.sendMessage("§7ID§f: §a" + cp.getFormat());
+                cs.sendMessage("§8====================");
             }
         }
     }
-//    
+    
     private void showChannelListeners(CommandSender cs, String channel)
     {
         List<Channel> l = ISMain.getInstance().getChannelManager().matchChannel(channel);

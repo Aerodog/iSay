@@ -1,8 +1,10 @@
-package com.patrickanker.isay.channels;
+package com.patrickanker.isay.core.channels;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.Statistician;
+import com.patrickanker.isay.channels.ChatChannel;
+import com.patrickanker.isay.channels.DebugChannel;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;

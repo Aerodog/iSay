@@ -12,7 +12,8 @@
 
 package com.patrickanker.isay.channels;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.channels.Channel;
+import com.patrickanker.isay.core.ChatPlayer;
 
 
 public class GroupChannel extends Channel {

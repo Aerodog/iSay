@@ -12,7 +12,8 @@
 
 package com.patrickanker.isay.channels;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.channels.Channel;
+import com.patrickanker.isay.core.ChatPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

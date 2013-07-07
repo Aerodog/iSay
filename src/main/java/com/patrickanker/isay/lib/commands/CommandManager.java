@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
-import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -46,7 +46,7 @@ public class CommandManager {
     public void registerCommands(Class<?> cls) 
     {
         CraftServer craftServer = (CraftServer) owningPlugin.getServer();
-        ArrayList<org.bukkit.command.Command> registeredCommands = new ArrayList<org.bukkit.command.Command>();
+        List<org.bukkit.command.Command> registeredCommands = new LinkedList<org.bukkit.command.Command>();
         
         Object obj = null;
 

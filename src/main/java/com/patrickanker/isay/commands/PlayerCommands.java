@@ -12,9 +12,9 @@
 
 package com.patrickanker.isay.commands;
 
-import com.patrickanker.isay.ChatPlayer;
+import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
-import com.patrickanker.isay.channels.Channel;
+import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
 import com.patrickanker.isay.lib.commands.Command;
 import com.patrickanker.isay.lib.commands.CommandPermission;

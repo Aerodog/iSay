@@ -1,5 +1,8 @@
-package com.patrickanker.isay;
+package com.patrickanker.isay.messageprocessing;
 
+import com.patrickanker.isay.core.ChatPlayer;
+import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.core.MessagePreprocessor;
 import com.patrickanker.isay.lib.permissions.PermissionsManager;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.entity.Player;
 
-public class PingManager {
+public class PingManager extends MessagePreprocessor {
 
     private final HashMap<String, Long> lastUsed = new HashMap();
     private final HashMap<String, Integer> pingCount = new HashMap();
@@ -95,7 +98,23 @@ public class PingManager {
         }
     }
 
-    public void shutdownPingTask()
+    @Override
+    public boolean process(Player sender, String message)
+    {
+        ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(sender);
+        ChatPlayer[] pingees = getPingeesFromString(message);
+        
+        for (ChatPlayer pingee : pingees) {
+            if (canPing(cp, pingee)) {
+                doPing(cp, pingee);
+            }
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public void shutdown()
     {
         if (this.pingTask != -1) {
             Bukkit.getScheduler().cancelTask(this.pingTask);
