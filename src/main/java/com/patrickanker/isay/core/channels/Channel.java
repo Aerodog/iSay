@@ -7,7 +7,7 @@ import java.util.HashMap;
 public abstract class Channel {
 
     protected String name;
-    protected HashMap<String, Boolean> listeners = new HashMap();
+    protected HashMap<String, Boolean> listeners = new HashMap<String, Boolean>();
     protected ISMain is = ISMain.getInstance();
     protected ChannelManager channelManager = ISMain.getInstance().getChannelManager();
 
@@ -43,7 +43,7 @@ public abstract class Channel {
     public void assignFocus(String player, boolean focus)
     {
         if (this.listeners.containsKey(player)) {
-            this.listeners.put(player, Boolean.valueOf(focus));
+            this.listeners.put(player, focus);
         }
     }
 

@@ -6,7 +6,7 @@
     <name>iSay</name>
     <groupId>com.patrickanker</groupId>
     <artifactId>iSay</artifactId>
-    <version>0.3</version>
+    <version>0.4.2</version>
     <packaging>jar</packaging>
     <url>http://github.com/psanker/iSay</url>
 
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.5.1-R0.1-SNAPSHOT</version>
+            <version>1.5.2-R0.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.5.1-R0.1-SNAPSHOT</version>
+            <version>1.5.2-R0.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         

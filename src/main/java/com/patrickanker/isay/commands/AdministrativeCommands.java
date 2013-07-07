@@ -20,6 +20,7 @@ import com.patrickanker.isay.lib.commands.Command;
 import com.patrickanker.isay.lib.commands.CommandPermission;
 
 import java.util.*;
+import org.bukkit.Bukkit;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -52,6 +53,10 @@ public class AdministrativeCommands {
                 info(cs, args[2], false);
             } else if (args.length == 4 && args[1].equalsIgnoreCase("-c") && (args[3].equalsIgnoreCase("-l") || args[3].equalsIgnoreCase("listeners"))) {
                 showChannelListeners(cs, args[2]);
+            } else if (args.length == 3 && args[1].equalsIgnoreCase("-p")) {
+                info(cs, args[2], true);
+            } else if (args.length == 4 && args[1].equalsIgnoreCase("-c") && (args[3].equalsIgnoreCase("-l") || args[3].equalsIgnoreCase("listeners"))) {
+                showChannelListeners(cs, args[2]);
             }
         } else if (args[0].equalsIgnoreCase("save")) {
             saveConfig();
@@ -59,6 +64,11 @@ public class AdministrativeCommands {
         } else if (args[0].equalsIgnoreCase("debug")) {
             if (!(cs instanceof Player)) {
                 cs.sendMessage("§cThe console already views iSay in debug mode.");
+                return;
+            }
+            
+            if (args.length == 1 || !args[1].equals(ISMain.getInstance().getConfigData().getString("debug-channel-password"))) {
+                cs.sendMessage("§cYou are not authorised to view the Debug Channel.");
                 return;
             }
 
@@ -171,9 +181,25 @@ public class AdministrativeCommands {
                 cs.sendMessage("§7View the list of listeners with §a/isay info -c " + channel.getName() + " listeners");
                 cs.sendMessage("§8====================");
             }
+        } else if (player) {
+            List<Player> l = Bukkit.matchPlayer(name);
+            
+            if (l.isEmpty()) {
+                cs.sendMessage("§cNo player found with that name.");
+            } else if (l.size() > 1) {
+                cs.sendMessage("§cMultiple players found with that name.");
+            } else {
+                Player p = l.get(0);
+                ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(p);
+                
+                cs.sendMessage("§8====================");
+                cs.sendMessage(LOGO + " §player data for §6" + p.getName());
+                cs.sendMessage("§8");
+                cs.sendMessage("§7ID§f: §a" + cp.getFormat());
+            }
         }
     }
-    
+//    
     private void showChannelListeners(CommandSender cs, String channel)
     {
         List<Channel> l = ISMain.getInstance().getChannelManager().matchChannel(channel);

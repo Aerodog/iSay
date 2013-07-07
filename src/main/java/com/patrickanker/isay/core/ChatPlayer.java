@@ -22,6 +22,7 @@ public class ChatPlayer {
     private boolean autoJoin = false;
     private List<String> autoJoinList = new LinkedList<String>();
     private List<String> ignoreList = new LinkedList<String>();
+    private boolean channelMute = false;
     private boolean muted = false;
     private String muteTimeout = "";
     private ChatPlayer converser;
@@ -71,6 +72,8 @@ public class ChatPlayer {
             List l = ISMain.getInstance().getPlayerConfig().getStringList(this.p.getName() + ".ignorelist");
             this.ignoreList.addAll(l);
         }
+        
+        ISMain.debugLog("Data loaded for \"" + p.getName() + "\"");
     }
 
     public void save()
@@ -88,6 +91,7 @@ public class ChatPlayer {
         ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".autojoinlistenable", this.autoJoin);
         ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".autojoinlist", this.autoJoinList);
         ISMain.getInstance().getPlayerConfig().set(this.p.getName() + ".ignorelist", this.ignoreList);
+        ISMain.debugLog("Data saved for \"" + p.getName() + "\"");
     }
 
     public Player getPlayer()
@@ -117,6 +121,16 @@ public class ChatPlayer {
 
         return (PermissionsManager.hasPermission(this.p.getName(), "isay.channel." + cc.getName().toLowerCase() + ".join"))
                 && (password.equals(cc.getPassword()));
+    }
+    
+    public boolean channelsMuted()
+    {
+        return channelMute;
+    }
+    
+    public void setChannelsMuted(boolean bool)
+    {
+        channelMute = bool;
     }
 
     public boolean isMuted()
