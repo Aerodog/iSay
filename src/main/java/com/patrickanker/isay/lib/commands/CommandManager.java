@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
-import org.bukkit.craftbukkit.v1_6_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_6_R2.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
