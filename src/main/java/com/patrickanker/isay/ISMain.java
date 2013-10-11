@@ -73,9 +73,10 @@ public final class ISMain extends JavaPlugin {
     @Override
     public void onEnable()
     {   
-        headerDebug();
+        
         
         instance = this;
+        headerDebug();
         config.load();
         debugLog("Configuration loaded");
 
