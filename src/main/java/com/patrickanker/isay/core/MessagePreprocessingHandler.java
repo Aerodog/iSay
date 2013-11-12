@@ -60,6 +60,11 @@ public class MessagePreprocessingHandler {
         return status;
     }
     
+    public void resetStatus()
+    {
+        status = STATUS.OK;
+    }
+    
     public void process(Player sender, String message)
     {
         for (Object obj : highestProcesses) {
