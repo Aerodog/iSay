@@ -33,7 +33,7 @@ public class PlayerListener implements Listener {
         if (ISMain.getInstance().getMessagePreprocessHandler().getStatus() == MessagePreprocessingHandler.STATUS.TERMINATED) {
             event.getRecipients().clear();
             event.setCancelled(true);
-            ISMain.getInstance().getMessagePreprocessHandler().resetStatus()
+            ISMain.getInstance().getMessagePreprocessHandler().resetStatus();
             return;
         }
 

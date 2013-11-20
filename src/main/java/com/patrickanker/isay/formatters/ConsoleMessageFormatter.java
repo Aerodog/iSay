@@ -1,6 +1,7 @@
 package com.patrickanker.isay.formatters;
 
 import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.core.Formatter;
 
 public class ConsoleMessageFormatter extends Formatter {
@@ -14,6 +15,9 @@ public class ConsoleMessageFormatter extends Formatter {
             master = ISMain.getDefaultConsoleFormat();
             ISMain.getInstance().getConfigData().setString("console-format", ISMain.getDefaultConsoleFormat());
         }
+        
+        if (MessageFormattingServices.containsURLs(in))
+            in = MessageFormattingServices.shortenURLs(in);
 
         master = Formatter.encodeColors(master);
         master = master.replace("$message", in);

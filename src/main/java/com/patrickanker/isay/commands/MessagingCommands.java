@@ -2,6 +2,7 @@ package com.patrickanker.isay.commands;
 
 import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.MuteServices;
 import com.patrickanker.isay.formatters.ConsoleMessageFormatter;
 import com.patrickanker.isay.formatters.SingleLineBroadcastFormatter;
@@ -51,6 +52,9 @@ public class MessagingCommands {
 
         if ((cs instanceof Player)) {
             concat = Formatter.encodeColors(concat);
+            
+            if (MessageFormattingServices.containsURLs(concat))
+                concat = MessageFormattingServices.shortenURLs(concat);
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.sendMessage(concat);
@@ -100,6 +104,12 @@ public class MessagingCommands {
             for (int i = 1; i < args.length; i++) {
                 concat = concat + args[i] + " ";
             }
+            
+            concat = concat.trim();
+            
+            if (MessageFormattingServices.containsURLs(concat))
+                concat = MessageFormattingServices.shortenURLs(concat);
+            
 
             if (newTellee.getPlayer().getName().equals(cp.getPlayer().getName())) {
                 from.sendMessage("§7You mumbled to yourself §8-> §b§o" + concat.trim());
@@ -118,7 +128,7 @@ public class MessagingCommands {
                     sender = cp.getPlayer().getName();
                 }
 
-                if (cp.getNameAlias() != null) {
+                if (newTellee.getNameAlias() != null) {
                     getter = newTellee.getNameAlias();
                 } else {
                     getter = newTellee.getPlayer().getName();
@@ -164,6 +174,11 @@ public class MessagingCommands {
             for (int i = 0; i < args.length; i++) {
                 concat = concat + args[i] + " §b§o";
             }
+            
+            concat = concat.trim();
+            
+            if (MessageFormattingServices.containsURLs(concat))
+                concat = MessageFormattingServices.shortenURLs(concat);
 
             String getter;
             String sender;
@@ -202,7 +217,7 @@ public class MessagingCommands {
         Player p = (Player) cs;
         ChatPlayer cp = ISMain.getInstance().getRegisteredPlayer(p);
 
-        List l = Bukkit.matchPlayer(args[0]);
+        List<Player> l = Bukkit.matchPlayer(args[0]);
 
         if (l.isEmpty()) {
             p.sendMessage("§cNo player found by that name.");

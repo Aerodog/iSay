@@ -26,8 +26,12 @@
 
 package com.patrickanker.isay;
 
-import com.rosaloves.bitlyj.Url;
-import static com.rosaloves.bitlyj.Bitly.*;
+import com.google.gson.stream.JsonReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,8 +41,8 @@ import java.util.regex.Pattern;
 
 public class MessageFormattingServices {
     
-    private static final String urlFormat = "((http|ftp|https)\\:\\/\\/)(w+?\\.)?([a-zA-Z0-9\\-\\._?%&=~#])+\\.([a-zA-Z]){2,4}(\\.([a-zA-Z]){2,2})?(\\:(\\d)+)?(\\/[a-zA-Z0-9\\-\\.\\:_?%&=~#]*)*";
-    private static final String bitLyFormat = "(http|https)\\:\\/\\/(bit)\\.(ly)\\/[a-zA-Z0-9]{6}";
+    private static final String urlFormat = "((http|ftp|https)\\:\\/\\/)(w+?\\.)?([a-zA-Z0-9\\-\\._?%&=~#])+\\.([a-zA-Z]){2,4}(\\.([a-zA-Z]){2,2})?(\\:(\\d)+)?(\\/[a-zA-Z0-9\\-\\.\\:_?%&=~#,+]*)*";
+    private static final String gooGlFormat = "(http|https)\\:\\/\\/(goo)\\.(gl)\\/[a-zA-Z0-9]{5,6}";
     
     private static final String hmsFormat = "(\\d{2})(\\:(\\d{2})){2}";
     
@@ -51,9 +55,9 @@ public class MessageFormattingServices {
         return (match.find() && (match.group(0).length() == in.length()));
     }
     
-    public static boolean isBitLy(String in)
+    public static boolean isGooGl(String in)
     {
-        Pattern pattern = Pattern.compile(bitLyFormat);
+        Pattern pattern = Pattern.compile(gooGlFormat);
         Matcher match = pattern.matcher(in);
         
         return match.find();
@@ -74,7 +78,7 @@ public class MessageFormattingServices {
         while (match.find()) {
             String nextURL = match.group();
             
-            if (isBitLy(nextURL)) {
+            if (isGooGl(nextURL)) {
                 continue;
             }
             
@@ -90,20 +94,66 @@ public class MessageFormattingServices {
     
     private static String getShortenedURL(final String longURL)
     {
-        String shortURL;
+        String shortURL = longURL;
         
-        Url url = as("psanker", "R_c434cf238771a5267d1f100d82ba7433").call(shorten(longURL));
+        String _url = "https://www.googleapis.com/urlshortener/v1/url";
+        String _content = "{\"longUrl\":\"" + longURL + "\"}";
+        
+        ISMain.debugLog(_content);
+        
+        DataOutputStream out = null;
+        JsonReader in = null;
         
         try {
-            shortURL = url.getShortUrl();
+            URL url = new URL(_url);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("charset", "utf-8");
+            connection.setRequestProperty("Content-Length", Integer.toString(_content.getBytes().length));
+            connection.setUseCaches(false);
             
-            if (shortURL != null)
-                return shortURL;
+            out = new DataOutputStream(connection.getOutputStream());
+            
+            out.writeBytes(_content);
+            out.flush();
+            
+            in = new JsonReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            in.beginObject();
+            
+            while (in.hasNext()) {
+                String name = in.nextName();
+                
+                if (name.equalsIgnoreCase("id"))
+                    shortURL = in.nextString();
+                else
+                    in.skipValue();
+            }
+            
         } catch (Throwable t) {
-            return longURL;
+            // Custom url ... Leave it
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    ISMain.log("Shortener output stream did not close properly: " + ex.getMessage(), 2);
+                }
+            }
+            
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    ISMain.log("Shortener input stream did not close properly: " + ex.getMessage(), 2);
+                }
+            }
+            
+            return shortURL;
         }
-        
-        return "";
     }
     
     // -- Date services --

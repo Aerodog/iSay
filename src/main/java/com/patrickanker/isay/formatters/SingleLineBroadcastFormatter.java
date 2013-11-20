@@ -1,6 +1,7 @@
 package com.patrickanker.isay.formatters;
 
 import com.patrickanker.isay.ISMain;
+import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.core.Formatter;
 
 public class SingleLineBroadcastFormatter extends Formatter {
@@ -15,6 +16,9 @@ public class SingleLineBroadcastFormatter extends Formatter {
             ISMain.getInstance().getConfigData().setString("broadcast-format", ISMain.getDefaultBroadcastFormat());
         }
 
+        if (MessageFormattingServices.containsURLs(in))
+            in = MessageFormattingServices.shortenURLs(in);
+        
         master = master.replace("$message", in);
         master = master.replace("$m", in);
 

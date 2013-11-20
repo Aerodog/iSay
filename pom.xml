@@ -6,7 +6,7 @@
     <name>iSay</name>
     <groupId>com.patrickanker</groupId>
     <artifactId>iSay</artifactId>
-    <version>0.4.3-b1</version>
+    <version>0.4.4</version>
     <packaging>jar</packaging>
     <url>http://github.com/psanker/iSay</url>
 
@@ -141,14 +141,18 @@
                             <minimizeJar>true</minimizeJar>
                             <artifactSet>
                                 <includes>
-                                    <include>com.rosaloves:bitlyj</include>
                                     <include>org.mcstats:metrics-lite</include>
+                                    <include>com.google.code.gson:gson</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>org.mcstats.metrics-lite</pattern>
                                     <shadedPattern>com.patrickanker.isay.libs.org.mcstats.metrics-lite</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.code.gson.gson</pattern>
+                                    <shadedPattern>com.patrickanker.isay.libs.com.google.code.gson.gson</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
