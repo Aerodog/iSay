@@ -10,7 +10,7 @@ A better chat plugin for [Bukkit][Bukkit]
 General Information
 -----------
 
-__Latest version built with Bukkit version 1.6.2-R0.2__
+__Latest version built with Bukkit version 1.6.4-R2.1__
 
 How does one install iSay? Check out [the installation wiki page][Installation].
 
