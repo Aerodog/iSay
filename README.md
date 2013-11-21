@@ -56,7 +56,7 @@ If you wish to see something in iSay, go ahead and submit a ticket. As usual, pr
 Pull Requests
 -------------
 
-Yes, I do accept pull requests. Despite the fact that this work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License, I do accept creativity and do waive the "no derivative works" part for forks that are intended to be used for pull requests to the main project (aka this one).
+Yes, I do accept pull requests. I do accept creativity, but I'd like forking to be intended for pull requests to the main project (aka this one).
 
 I like to see these things:
 
