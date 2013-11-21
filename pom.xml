@@ -6,7 +6,7 @@
     <name>iSay</name>
     <groupId>com.patrickanker</groupId>
     <artifactId>iSay</artifactId>
-    <version>0.4.5</version>
+    <version>0.5.0</version>
     <packaging>jar</packaging>
     <url>http://github.com/psanker/iSay</url>
 
