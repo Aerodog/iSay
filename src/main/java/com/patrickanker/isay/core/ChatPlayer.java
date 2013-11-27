@@ -3,7 +3,7 @@ package com.patrickanker.isay.core;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
-import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.util.permissions.PermissionsManager;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

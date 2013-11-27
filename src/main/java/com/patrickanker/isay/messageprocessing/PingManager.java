@@ -3,7 +3,7 @@ package com.patrickanker.isay.messageprocessing;
 import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.core.MessagePreprocessor;
-import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.util.permissions.PermissionsManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

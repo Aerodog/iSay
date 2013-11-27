@@ -4,9 +4,9 @@ import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.ISMain;
 import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
-import com.patrickanker.isay.lib.commands.Command;
-import com.patrickanker.isay.lib.commands.CommandPermission;
-import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.util.commands.Command;
+import com.patrickanker.isay.util.commands.CommandPermission;
+import com.patrickanker.isay.util.permissions.PermissionsManager;
 
 import java.util.Collections;
 import java.util.LinkedList;

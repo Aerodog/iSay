@@ -1,7 +1,7 @@
 package com.patrickanker.isay;
 
-import com.patrickanker.isay.lib.config.PropertyConfiguration;
-import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.util.config.PropertyConfiguration;
+import com.patrickanker.isay.util.permissions.PermissionsManager;
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;

@@ -5,8 +5,8 @@ import com.patrickanker.isay.*;
 import com.patrickanker.isay.channels.DebugChannel;
 import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
-import com.patrickanker.isay.lib.commands.Command;
-import com.patrickanker.isay.lib.commands.CommandPermission;
+import com.patrickanker.isay.util.commands.Command;
+import com.patrickanker.isay.util.commands.CommandPermission;
 
 import java.util.*;
 import org.bukkit.Bukkit;

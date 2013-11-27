@@ -6,7 +6,7 @@
     <name>iSay</name>
     <groupId>com.patrickanker</groupId>
     <artifactId>iSay</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
     <packaging>jar</packaging>
     <url>http://github.com/psanker/iSay</url>
 
@@ -165,8 +165,8 @@
 
                         <configuration>
                             <descriptor>${basedir}/src/main/assembly/default.xml</descriptor>
-                            <finalName>iSay</finalName>
-                            <outputDirectory>${basedir}/latest</outputDirectory>
+                            <finalName>iSay-</finalName>
+                            <outputDirectory>${basedir}/dist</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -177,8 +177,8 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.2.2</version>
                 <configuration>
-                    <preparationGoals>assembly:assembly</preparationGoals>
-                    <goals>assembly:assembly</goals>
+                    <preparationGoals>assembly</preparationGoals>
+                    <goals>assembly</goals>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>

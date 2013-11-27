@@ -1,7 +1,7 @@
 package com.patrickanker.isay.messageprocessing;
 
 import com.patrickanker.isay.core.MessagePreprocessor;
-import com.patrickanker.isay.lib.config.PropertyConfiguration;
+import com.patrickanker.isay.util.config.PropertyConfiguration;
 import org.bukkit.entity.Player;
 
 public class ItemAliasManager extends MessagePreprocessor {

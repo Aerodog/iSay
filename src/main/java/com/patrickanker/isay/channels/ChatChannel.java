@@ -7,7 +7,7 @@ import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.Statistician;
 import com.patrickanker.isay.formatters.GhostMessageFormatter;
 import com.patrickanker.isay.formatters.MessageFormatter;
-import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.util.permissions.PermissionsManager;
 import com.patrickanker.isay.core.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;

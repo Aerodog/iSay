@@ -18,9 +18,9 @@ import com.patrickanker.isay.MessageFormattingServices;
 import com.patrickanker.isay.MuteServices;
 import com.patrickanker.isay.core.channels.Channel;
 import com.patrickanker.isay.channels.ChatChannel;
-import com.patrickanker.isay.lib.commands.Command;
-import com.patrickanker.isay.lib.commands.CommandPermission;
-import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.util.commands.Command;
+import com.patrickanker.isay.util.commands.CommandPermission;
+import com.patrickanker.isay.util.permissions.PermissionsManager;
 import java.util.List;
 
 import org.bukkit.Bukkit;

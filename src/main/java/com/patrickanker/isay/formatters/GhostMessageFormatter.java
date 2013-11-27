@@ -2,7 +2,7 @@ package com.patrickanker.isay.formatters;
 
 import com.patrickanker.isay.core.ChatPlayer;
 import com.patrickanker.isay.channels.ChatChannel;
-import com.patrickanker.isay.lib.permissions.PermissionsManager;
+import com.patrickanker.isay.util.permissions.PermissionsManager;
 import com.patrickanker.isay.core.Formatter;
 
 public class GhostMessageFormatter extends Formatter {
